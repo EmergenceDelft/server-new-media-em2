@@ -1,0 +1,30 @@
+{
+  "name": "server-new-media-em2",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "cookie-parser": "~1.4.4",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "express-ws": "^5.0.2",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "morgan": "~1.9.1"
+  },
+  "description": "first server setup",
+  "main": "app.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EmergenceDelft/server-new-media-em2.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EmergenceDelft/server-new-media-em2/issues"
+  },
+  "homepage": "https://github.com/EmergenceDelft/server-new-media-em2#readme"
+}
