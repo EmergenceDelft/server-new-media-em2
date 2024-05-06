@@ -1,15 +1,9 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
-
+const sequelize = require('services/db')
 class Voxel extends Model {}
 
 Voxel.init(
   {
     id: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-    module_id: {
       type: DataTypes.STRING,
       allowNull: false,
     },

@@ -1,12 +1,12 @@
-const { Sequelize, DataTypes, Model } = require('sequelize');
-const sequelize = new Sequelize('sqlite::memory:');
+const sequelize = require('services/db')
 
 class Module extends Model {}
 
+// Definition of the Module database model
 Module.init(
   {
     id: {
-      type: DataTypes.STRING,
+      type: DataTypes.UUIDV4,
       allowNull: false,
     },
     mac_adres: {
@@ -19,3 +19,17 @@ Module.init(
     modelName: 'Module', 
   },
 );
+
+//Definition of the one to many relationship between Module and Voxel
+Module.associate = function(models) {
+    Module.hasMany(models.Voxel, {
+        foreignKey: "module_id"
+    });
+};
+
+//Definition of the one to many relationship between Module and Sensor
+Module.associate = function(models) {
+    Module.hasMany(models.Sensor, {
+        foreignKey: "module_id"
+    });
+};
