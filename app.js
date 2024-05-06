@@ -1,10 +1,12 @@
-var express = require('express');
+
+import express from 'express'
+import expressWs from 'express-ws';
+import sequelize from './services/db.js';
+
 var app = express();
-var expressWs = require('express-ws')(app);
-var db = require('db')
+var ws = expressWs(app);
 
 var clients = [];
-
 
 app.use(function (req, res, next) {
   console.log('middleware');

@@ -1,5 +1,23 @@
-const { Sequelize } = require('sequelize');
+import { Sequelize } from "sequelize";
 
-const sequelize = new Sequelize('postgres://user:pass@example.com:5432/dbname') // Example for postgres
 
-module.exports = sequelize
+const sequelize = new Sequelize(
+  process.env.DB_NAME || "new_media",
+  process.env.DB_USER || "nmpr",
+  process.env.DB_PASSWORD || "admin",
+  {
+    host: process.env.DB_HOST || "localhost",
+    dialect: "postgres",
+  }
+);
+
+sequelize
+  .authenticate()
+  .then(() => {
+    console.log("DATABASE CONNECTED");
+  })
+  .catch((err) => {
+    console.log("Errs");
+  });
+
+export default sequelize

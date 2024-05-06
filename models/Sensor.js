@@ -1,17 +1,20 @@
-const sequelize = require('services/db')
+import { DataTypes } from "sequelize";
 
-class Sensor extends Model {}
+const Sensor = (sequelize, Sequelize) => {
+    const Sensor = sequelize.define("users", {
+        id: {
+          type: DataTypes.UUIDV4,
+          allowNull: false,
+        },
+    });
+    return Sensor;
+}
 
-Sensor.init(
-  {
-    id: {
-      type: DataTypes.STRING,
-      allowNull: false,
-    },
-  },
-  {
-    sequelize, 
-    modelName: 'Sensor', 
-  },
-);
+//Definition of the one to many relationship between Module and Sensor
+Sensor.associate = function(models) {
+    Sensor.belongsTo(models.Module, {
+        foreignKey: "module_id"
+    });
+};
 
+export default Sensor;
