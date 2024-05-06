@@ -1,6 +1,6 @@
 import { Sequelize } from "sequelize";
 
-
+//Setup for the DB connection
 const sequelize = new Sequelize(
   process.env.DB_NAME || "new_media",
   process.env.DB_USER || "nmpr",

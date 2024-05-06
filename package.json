@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node app.js"
+    "start": "nodemon app.js"
   },
   "type": "module",
   "dependencies": {
@@ -21,6 +21,7 @@
     "sequelize": "^6.37.3",
     "sqlite3": "^5.1.7",
     "startup": "^1.1.1",
+    "uuid": "^9.0.1",
     "websockets": "^0.2.0"
   },
   "description": "first server setup",
@@ -34,5 +35,8 @@
   "bugs": {
     "url": "https://github.com/EmergenceDelft/server-new-media-em2/issues"
   },
-  "homepage": "https://github.com/EmergenceDelft/server-new-media-em2#readme"
+  "homepage": "https://github.com/EmergenceDelft/server-new-media-em2#readme",
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
 }

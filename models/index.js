@@ -1,29 +1,33 @@
-'use strict';
-
-import fs from "fs"
-import sequelize from "../services/db";
-
-var basename  = path.basename(__filename);
-var db        = {};
+import  Sequelize  from "sequelize";
+import sequelize from '../services/db.js'
 
 
-fs
-  .readdirSync(__dirname)
-  .filter(file => {
-    return (file.indexOf('.') !== 0) && (file !== basename) && (file.slice(-3) === '.js');
-  })
-  .forEach(file => {
-    var model = sequelize['import'](path.join(__dirname, file));
-    db[model.name] = model;
-  });
-
-Object.keys(db).forEach(modelName => {
-  if (db[modelName].associate) {
-    db[modelName].associate(db);
-  }
-});
+// Define a db object that can be used globally
+const db = {}
 
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-module.exports = db;
+// Define all models in the db object
+import Module from "./Module.js";
+import Voxel from "./Voxel.js";
+import Sensor from "./Sensor.js";
+db.Module = Module(sequelize, Sequelize);
+db.Voxel = Voxel(sequelize, Sequelize);
+db.Sensor = Sensor(sequelize, Sequelize);
+
+
+//One Module has many Voxels
+db.Module.hasMany(db.Voxel);
+db.Voxel.belongsTo(db.Module, {
+  foreignKey: "module_id"
+});
+
+//One Module has many Sensors
+db.Module.hasMany(db.Sensor);
+db.Sensor.belongsTo(db.Sensor, {
+  foreignKey: "module_id"
+});
+
+
+export default db;

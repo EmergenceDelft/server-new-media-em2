@@ -3,7 +3,8 @@ import { DataTypes } from "sequelize";
 const Voxel = (sequelize, Sequelize) => {
     return sequelize.define("voxel", {
       id: {
-        type: DataTypes.UUIDV4,
+        type: DataTypes.STRING,
+        primaryKey: true,
         allowNull: false,
       },
       isOn: {
@@ -17,12 +18,5 @@ const Voxel = (sequelize, Sequelize) => {
       }
     });
 }
-
-//Definition of the one to many relationship between Module and Sensor
-Voxel.associate = function(models) {
-    Voxel.belongsTo(models.Module, {
-        foreignKey: "module_id"
-    });
-};
 
 export default Voxel;
