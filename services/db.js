@@ -6,7 +6,7 @@ const sequelize = new Sequelize(
   process.env.DB_USER || "nmpr",
   process.env.DB_PASSWORD || "admin",
   {
-    host: process.env.DB_HOST || "localhost",
+    host: process.env.DB_HOST || "postgres",
     dialect: "postgres",
   }
 );

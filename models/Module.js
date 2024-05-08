@@ -5,7 +5,8 @@ const Module = (sequelize, Sequelize) => {
     const Module = sequelize.define("module", {
         id: {
           type: DataTypes.STRING,
-          defaultValue: uuidv4(),
+          //we need () =>, otherwise the uuidv4 is only computed once and used as a default
+          defaultValue: () => uuidv4(),
           primaryKey: true
         },
         mac_adres: {
