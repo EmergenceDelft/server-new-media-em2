@@ -49,5 +49,13 @@ app.ws('/echo', function(ws, req) {
 
 });
 
+function sendPing() {
+  clients.forEach(client => {
+    client.send(Date.now());
+  });
+}
+
+setInterval(sendPing, 1000);
+
 
 app.listen(3000);

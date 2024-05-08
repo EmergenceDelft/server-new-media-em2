@@ -11,7 +11,7 @@ const Module = (sequelize, Sequelize) => {
         },
         mac_adres: {
           type: DataTypes.STRING,
-        },
+        }
     });
     return Module;
 }
