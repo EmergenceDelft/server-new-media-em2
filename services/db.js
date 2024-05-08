@@ -8,7 +8,7 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST || "postgres",
     dialect: "postgres",
-  }
+  },
 );
 
 sequelize
@@ -20,4 +20,4 @@ sequelize
     console.log("Errs");
   });
 
-export default sequelize
+export default sequelize;
