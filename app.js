@@ -32,14 +32,9 @@ app.get('/', function(req, res, next){
  
 app.ws('/echo', function(ws, req) {
   clients.push(ws);
-  createModule().then(
-    console.log("Made new Module")
-  )
-  console.log("Made a new connection!");
 
   ws.on('message', function(msg) {
-    console.log(msg);
-    ws.send(`echo ${msg}`);
+    handleMessage(msg)
   });
 
   ws.on('close', function() {
@@ -48,6 +43,11 @@ app.ws('/echo', function(ws, req) {
   });
 
 });
+
+
+function handleMessage(msg) {
+  
+}
 
 function sendPing() {
   clients.forEach(client => {

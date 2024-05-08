@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize"
 
 const Sensor = (sequelize, Sequelize) => {
-  const Sensor = sequelize.define("users", {
+  const Sensor = sequelize.define("sensor", {
     id: {
       type: DataTypes.STRING,
       primaryKey: true,
