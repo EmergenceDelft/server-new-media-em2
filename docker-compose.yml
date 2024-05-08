@@ -1,0 +1,20 @@
+services:
+  postgres:
+    image: postgres:latest
+    restart: always
+    # maybe hide these, but they are only used in connection with this code, so it's not sensitive information 
+    environment:
+      POSTGRES_USER: nmpr
+      POSTGRES_PASSWORD: admin
+      POSTGRES_DB: new_media
+    ports:
+      - "5432:5432"
+    
+  nodeapp:
+    build: .
+    restart: on-failure
+    ports:
+      - "3000:3000" 
+    depends_on:
+      - postgres
+    command: ["npm", "start"]  # Command to start the Node.js application
