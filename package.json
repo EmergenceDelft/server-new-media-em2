@@ -38,6 +38,9 @@
   },
   "homepage": "https://github.com/EmergenceDelft/server-new-media-em2#readme",
   "devDependencies": {
-    "nodemon": "^3.1.0"
+    "eslint": "^8.57.0",
+    "nodemon": "^3.1.0",
+    "prettier": "^3.2.5",
+    "prettier-eslint": "^16.3.0"
   }
 }
