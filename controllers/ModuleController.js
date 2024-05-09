@@ -3,7 +3,7 @@ import db from "../models/index.js"
 const Module = db.Module
 
 // Exports a createModule function which can be used in the app
-export const createModule = async () => {
+export async function createModule() {
   try {
     Module.create().then(console.log("Module created!"))
   } catch (error) {
@@ -11,4 +11,4 @@ export const createModule = async () => {
   }
 }
 
-export const updateModule = async (req, res) => {}
+export const updateModule = async () => {}

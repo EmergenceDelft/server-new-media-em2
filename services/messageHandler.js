@@ -1,23 +1,20 @@
-const MESSAGE_TYPE = {
-  HELLO: "hello",
-  SENSOR_READING: "sensor_reading"
-}
+import { createModule } from "../controllers/ModuleController"
 
-function handleMessage(msg) {
+export function handleMessage(msg) {
   try {
-    var msg = JSON.parse(msg)
-    msg.type = MESSAGE_TYPES(msg.type)
+    var jsonMsg = JSON.parse(msg)
   } catch (err) {
     console.error("Error in parsing message data.", err)
   }
 
   // Initial message sent by the ESP to the server.
-  switch (msg.type) {
-    case MESSAGE_TYPE.HELLO:
-      handleHelloMessage(msg)
+  // Sadly JS does not have native enum support.
+  switch (jsonMsg.type) {
+    case "hello":
+      handleHelloMessage(jsonMsg)
       break
-    case MESSAGE_TYPE.SENSOR_READING:
-      handleSensorDataMessage(msg)
+    case "sensor_readings":
+      handleSensorReadingMessage(jsonMsg)
       break
   }
 }
@@ -32,4 +29,4 @@ function handleHelloMessage(msg) {
     )
 }
 
-function handleSensorReadingMessage(msg) {}
+function handleSensorReadingMessage() {}
