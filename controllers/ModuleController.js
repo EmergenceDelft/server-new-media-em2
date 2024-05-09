@@ -2,6 +2,18 @@ import db from "../models/index.js"
 
 const Module = db.Module
 
+export async function getModuleByMacAddress(mac_address) {
+  try {
+    return Module.findOne({
+      where: {
+        mac_address
+      }
+    })
+  } catch (error) {
+    console.log(error)
+  }
+}
+
 // Exports a createModule function which can be used in the app
 export async function createModule(mac_address) {
   try {

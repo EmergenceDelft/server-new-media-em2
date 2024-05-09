@@ -1,4 +1,7 @@
-import { createModule } from "../controllers/ModuleController.js"
+import {
+  createModule,
+  getModuleByMacAddress
+} from "../controllers/ModuleController.js"
 
 export function handleMessage(msg) {
   try {
@@ -20,13 +23,13 @@ export function handleMessage(msg) {
 }
 
 function handleHelloMessage(msg) {
-  createModule({
-    mac_address: msg.mac_address
-  })
-    .then(console.log("Module created"))
-    .catch((err) =>
-      console.error("Could not create a module in the database", err)
-    )
+  //Check if the mac address already exists in DB, if not, create a new module
+  if (!getModuleByMacAddress(msg.mac_address))
+    createModule(msg.mac_address)
+      .then(console.log("Module created"))
+      .catch((err) =>
+        console.error("Could not create a module in the database", err)
+      )
 }
 
 function handleSensorReadingMessage() {}
