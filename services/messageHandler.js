@@ -1,4 +1,4 @@
-import { createModule } from "../controllers/ModuleController"
+import { createModule } from "../controllers/ModuleController.js"
 
 export function handleMessage(msg) {
   try {
@@ -21,7 +21,7 @@ export function handleMessage(msg) {
 
 function handleHelloMessage(msg) {
   createModule({
-    mac_adres: msg.mac_adres
+    mac_address: msg.mac_address
   })
     .then(console.log("Module created"))
     .catch((err) =>
