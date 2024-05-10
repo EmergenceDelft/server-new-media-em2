@@ -17,6 +17,9 @@ const Sensor = (sequelize) => {
     },
     value: {
       type: DataTypes.REAL
+    },
+    processed: {
+      type: DataTypes.BOOLEAN
     }
   })
   return Sensor

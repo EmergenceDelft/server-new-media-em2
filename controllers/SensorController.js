@@ -7,7 +7,8 @@ export async function createSensorReading(mac_address, sensor_ty, val) {
     Sensor.create({
       from_mac: mac_address,
       sensor_type: sensor_ty,
-      value: val
+      value: val,
+      processed: false
     }).then(console.log("Sensor reading created!"))
   } catch (error) {
     console.log(error)
