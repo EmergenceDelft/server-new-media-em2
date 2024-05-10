@@ -13,22 +13,22 @@ export function handleMessage(msg) {
   // Initial message sent by the ESP to the server.
   // Sadly JS does not have native enum support.
   switch (jsonMsg.type) {
-    case "hello":
-      handleHelloMessage(jsonMsg)
-      break
+    // case "hello":
+    //   handleHelloMessage(jsonMsg.mac_address)
+    //   break
     case "sensor_readings":
       handleSensorReadingMessage(jsonMsg)
       break
   }
 }
 
-function handleHelloMessage(msg) {
+export function createModuleMacAddress(mac_address) {
   //Check if the mac address already exists in DB, if not, create a new module
-  getModuleByMacAddress(msg.mac_address)
+  getModuleByMacAddress(mac_address)
     .then((existingModule) => {
       if (!existingModule) {
         console.log("in here")
-        createModule(msg.mac_address)
+        createModule(mac_address)
           .then(console.log("Module created"))
           .catch((err) =>
             console.error("Could not create a module in the database", err)
@@ -43,5 +43,6 @@ function handleHelloMessage(msg) {
 }
 
 function handleSensorReadingMessage(msg) {
+  //add to sensor table
   console.log(msg)
 }

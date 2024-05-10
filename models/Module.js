@@ -11,6 +11,10 @@ const Module = (sequelize) => {
     },
     mac_address: {
       type: DataTypes.STRING
+    },
+    connection_alive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
     }
   })
   return Module
