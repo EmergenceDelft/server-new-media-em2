@@ -12,6 +12,7 @@ import {
   createModuleMacAddress,
   handleMessage
 } from "./services/messageHandler.js"
+import { createSensorReading } from "./controllers/SensorController.js"
 
 var app = express()
 var ws = expressWs(app)
@@ -37,19 +38,25 @@ app.get("/", function (req, res, next) {
   res.end()
 })
 
-app.ws("/echo", function (ws, req) {
+app.ws("/echo", async function (ws, req) {
+  console.log("hiiiiiiiiii")
   clients.push(ws)
 
-  console.log("i think this is a mac address?")
   const mac = req.query.mac_address
-  console.log("hello??")
-  console.log(mac)
 
   createModuleMacAddress(mac)
-  updateModule(mac, true)
+  await updateModule(mac, true)
 
-  ws.on("message", function (msg) {
-    handleMessage(msg)
+  console.log("updated?")
+  ws.on("message", async function (msg) {
+    try {
+      console.log("handling")
+      handleMessage(msg, mac)
+      console.log("done handling")
+      await updateModule(mac, true)
+    } catch (error) {
+      console.error("Error parsing or processing message:", error)
+    }
   })
 
   ws.on("close", function () {

@@ -2,8 +2,9 @@ import {
   createModule,
   getModuleByMacAddress
 } from "../controllers/ModuleController.js"
+import { createSensorReading } from "../controllers/SensorController.js"
 
-export function handleMessage(msg) {
+export function handleMessage(msg, mac) {
   try {
     var jsonMsg = JSON.parse(msg)
   } catch (err) {
@@ -13,11 +14,8 @@ export function handleMessage(msg) {
   // Initial message sent by the ESP to the server.
   // Sadly JS does not have native enum support.
   switch (jsonMsg.type) {
-    // case "hello":
-    //   handleHelloMessage(jsonMsg.mac_address)
-    //   break
-    case "sensor_readings":
-      handleSensorReadingMessage(jsonMsg)
+    case "sensor_reading":
+      handleSensorReadingMessage(jsonMsg, mac)
       break
   }
 }
@@ -42,7 +40,7 @@ export function createModuleMacAddress(mac_address) {
     )
 }
 
-function handleSensorReadingMessage(msg) {
+function handleSensorReadingMessage(msg, mac) {
   //add to sensor table
-  console.log(msg)
+  createSensorReading(mac, msg.sensor_type, msg.value)
 }
