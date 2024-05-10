@@ -4,7 +4,8 @@ const Module = db.Module
 
 export async function getModuleByMacAddress(mac_address) {
   try {
-    return Module.findOne({
+    console.log("looking up mac address")
+    return await Module.findOne({
       where: {
         mac_address
       }

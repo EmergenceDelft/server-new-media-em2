@@ -24,12 +24,24 @@ export function handleMessage(msg) {
 
 function handleHelloMessage(msg) {
   //Check if the mac address already exists in DB, if not, create a new module
-  if (!getModuleByMacAddress(msg.mac_address))
-    createModule(msg.mac_address)
-      .then(console.log("Module created"))
-      .catch((err) =>
-        console.error("Could not create a module in the database", err)
-      )
+  getModuleByMacAddress(msg.mac_address)
+    .then((existingModule) => {
+      if (!existingModule) {
+        console.log("in here")
+        createModule(msg.mac_address)
+          .then(console.log("Module created"))
+          .catch((err) =>
+            console.error("Could not create a module in the database", err)
+          )
+      } else {
+        console.log("Module with MAC address already exists")
+      }
+    })
+    .catch((err) =>
+      console.error("Error occurred while checking for module:", err)
+    )
 }
 
-function handleSensorReadingMessage() {}
+function handleSensorReadingMessage(msg) {
+  console.log(msg)
+}
