@@ -7,10 +7,12 @@ const Module = (sequelize) => {
       type: DataTypes.STRING,
       //we need () =>, otherwise the uuidv4 is only computed once and used as a default
       defaultValue: () => uuidv4(),
-      primaryKey: true
+      primaryKey: true,
+      allowNull: false
     },
     mac_address: {
-      type: DataTypes.STRING
+      type: DataTypes.STRING,
+      allowNull: false
     }
   })
   return Module

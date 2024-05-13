@@ -1,7 +1,6 @@
 import express from "express"
 import expressWs from "express-ws"
 import sequelize from "./services/db.js"
-import { createModule } from "./controllers/ModuleController.js"
 import { handleMessage } from "./services/messageHandler.js"
 
 var app = express()
@@ -17,18 +16,18 @@ sequelize
 
 var clients = []
 
-app.use(function (req, res, next) {
+app.use(function (req, _res, next) {
   console.log("middleware")
   req.testing = "testing"
   return next()
 })
 
-app.get("/", function (req, res, next) {
+app.get("/", function (req, res) {
   console.log("get route", req.testing)
   res.end()
 })
 
-app.ws("/echo", function (ws, req) {
+app.ws("/echo", function (ws) {
   clients.push(ws)
 
   ws.on("message", function (msg) {

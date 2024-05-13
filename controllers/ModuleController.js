@@ -15,10 +15,11 @@ export async function getModuleByMacAddress(mac_address) {
 }
 
 // Exports a createModule function which can be used in the app
-export async function createModule(mac_address) {
+export async function createModule(id, mac_address) {
   try {
     Module.create({
-      mac_address: mac_address
+      id,
+      mac_address
     }).then(console.log("Module created!"))
   } catch (error) {
     console.log(error)
