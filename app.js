@@ -77,7 +77,6 @@ setInterval(async () => {
 
 setInterval(async () => {
   try {
-    console.log("watching database")
     await watchDatabase(clients)
   } catch (err) {
     console.error("Error watching database", err)

@@ -1,9 +1,8 @@
-import db from "../models/index.js" // Assuming this imports your Sequelize models
-
 export async function processDatabaseEntries(newEntries, clients) {
   clients.forEach((ws) => {
     if (newEntries.length > 0) {
       ws.send(newEntries.length + " new sensor data")
+      console.log(newEntries.length + " new sensor data")
       // There are new entries
       newEntries.forEach((entry) => {
         const data = entry.dataValues

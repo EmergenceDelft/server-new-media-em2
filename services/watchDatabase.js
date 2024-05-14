@@ -12,25 +12,31 @@ async function watchDatabase(clients) {
     // while (true) {
     const currentTime = new Date()
     const lastSecond = new Date(currentTime - 1000) // Get time 1 second ago
-    console.log("looking for something with clients" + clients)
 
     //Query the database for entries created in the last second
     const newEntries = await db.Sensor.findAll({
       where: {
         createdAt: {
           [db.Sequelize.Op.gt]: lastSecond
-        }
+        },
+        processed: false
       }
     })
-    console.log("found something at time " + currentTime)
-    console.log(newEntries)
 
     // Process the new entries
-    await processDatabaseEntries(newEntries, clients) // Pass ws object to the processing function
+    if (newEntries.length > 0) {
+      await processDatabaseEntries(newEntries, clients) // Pass ws object to the processing function
 
-    // Wait for the specified interval before checking again
-    await new Promise((resolve) => setTimeout(resolve, processInterval))
-    //}
+      // Update all newEntries and set the 'processed' column to true
+      await db.Sensor.update(
+        { processed: true },
+        {
+          where: {
+            id: newEntries.map((entry) => entry.id)
+          }
+        }
+      )
+    }
   } catch (error) {
     console.error("Error while watching database:", error)
   }
