@@ -1,7 +1,7 @@
 import express from "express"
 import expressWs from "express-ws"
 import sequelize from "./services/db.js"
-
+import watchDatabase from "./services/watchDatabase.js"
 import db from "./models/index.js"
 
 import {
@@ -75,4 +75,15 @@ setInterval(async () => {
   }
 }, 10000)
 
+setInterval(async () => {
+  try {
+    console.log("watching database")
+    await watchDatabase(clients)
+  } catch (err) {
+    console.error("Error watching database", err)
+  }
+}, 1000)
+//this runs watching the database every second, and
+//then watchDatabase(clients) doesn't have a while true loop anymore
+//this is done this way in order to make sure that the clients object is passed to watchDatabase as often as possible
 app.listen(3000)
