@@ -1,19 +1,18 @@
-import { DataTypes } from "sequelize";
-import { v4 as uuidv4 } from "uuid";
+import { DataTypes } from "sequelize"
 
-const Module = (sequelize, Sequelize) => {
+const Module = (sequelize) => {
   const Module = sequelize.define("module", {
-    id: {
+    mac_address: {
       type: DataTypes.STRING,
-      //we need () =>, otherwise the uuidv4 is only computed once and used as a default
-      defaultValue: () => uuidv4(),
       primaryKey: true,
+      allowNull: false
     },
-    mac_adres: {
-      type: DataTypes.STRING,
-    },
-  });
-  return Module;
-};
+    connection_alive: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: true
+    }
+  })
+  return Module
+}
 
-export default Module;
+export default Module

@@ -1,22 +1,29 @@
-import { DataTypes } from "sequelize";
+import { DataTypes } from "sequelize"
 
-const Voxel = (sequelize, Sequelize) => {
+const Voxel = (sequelize) => {
   return sequelize.define("voxel", {
     id: {
       type: DataTypes.STRING,
       primaryKey: true,
-      allowNull: false,
+      allowNull: false
+    },
+    module_id: {
+      type: DataTypes.STRING,
+      references: {
+        model: "modules",
+        key: "mac_address"
+      }
     },
     isOn: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.BOOLEAN
     },
     position_x: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.INTEGER
     },
     position_y: {
-      type: DataTypes.INTEGER,
-    },
-  });
-};
+      type: DataTypes.INTEGER
+    }
+  })
+}
 
-export default Voxel;
+export default Voxel

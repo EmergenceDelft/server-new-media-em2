@@ -1,10 +1,21 @@
 import { DataTypes } from "sequelize"
 
-const Sensor = (sequelize, Sequelize) => {
-  const Sensor = sequelize.define("users", {
+const Sensor = (sequelize) => {
+  const Sensor = sequelize.define("sensor", {
     id: {
       type: DataTypes.STRING,
       primaryKey: true,
+      allowNull: false
+    },
+    module_mac_address: {
+      type: DataTypes.STRING,
+      references: {
+        model: "modules",
+        key: "mac_address"
+      }
+    },
+    type: {
+      type: DataTypes.ENUM(["ULTRASOUND", "LOUDNESS", "CAPACITIVE"]),
       allowNull: false
     }
   })
