@@ -2,17 +2,12 @@ import express from "express"
 import expressWs from "express-ws"
 import sequelize from "./services/db.js"
 import watchDatabase from "./services/watchDatabase.js"
-import db from "./models/index.js"
 
 import {
   updateAllConnections,
   updateModule
 } from "./controllers/ModuleController.js"
-import {
-  createModuleMacAddress,
-  handleMessage
-} from "./services/messageHandler.js"
-import { createSensorReading } from "./controllers/SensorController.js"
+import { handleMessage } from "./services/messageHandler.js"
 
 var app = express()
 var ws = expressWs(app)
@@ -27,13 +22,13 @@ sequelize
 
 var clients = []
 
-app.use(function (req, res, next) {
+app.use(function (req, _res, next) {
   console.log("middleware")
   req.testing = "testing"
   return next()
 })
 
-app.get("/", function (req, res, next) {
+app.get("/", function (req, res) {
   console.log("get route", req.testing)
   res.end()
 })
@@ -42,18 +37,18 @@ app.ws("/echo", async function (ws, req) {
   console.log("hiiiiiiiiii")
   clients.push(ws)
 
-  const mac = req.query.mac_address
+  //const mac = req.query.mac_address
 
-  createModuleMacAddress(mac)
-  await updateModule(mac, true)
+  //createModuleMacAddress(mac)
+  //await updateModule(mac, true)
 
   console.log("updated?")
   ws.on("message", async function (msg) {
     try {
       console.log("handling")
-      handleMessage(msg, mac)
+      handleMessage(msg)
       console.log("done handling")
-      await updateModule(mac, true)
+      //await updateModule(mac, true)
     } catch (error) {
       console.error("Error parsing or processing message:", error)
     }
@@ -61,7 +56,7 @@ app.ws("/echo", async function (ws, req) {
 
   ws.on("close", function () {
     // Remove the WebSocket client from the array when disconnected
-    updateModule(mac, false)
+    //updateModule(mac, false)
     clients = clients.filter((client) => client !== ws)
   })
 })

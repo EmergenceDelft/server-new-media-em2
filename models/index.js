@@ -11,20 +11,35 @@ db.Sequelize = Sequelize
 import Module from "./Module.js"
 import Voxel from "./Voxel.js"
 import Sensor from "./Sensor.js"
+import SensorReading from "./SensorReading.js"
+
 db.Module = Module(sequelize, Sequelize)
 db.Voxel = Voxel(sequelize, Sequelize)
 db.Sensor = Sensor(sequelize, Sequelize)
+db.SensorReading = SensorReading(sequelize, Sequelize)
 
 //One Module has many Voxels
-db.Module.hasMany(db.Voxel)
+db.Module.hasMany(db.Voxel, {
+  foreignKey: "module_id"
+})
 db.Voxel.belongsTo(db.Module, {
   foreignKey: "module_id"
 })
 
 //One Module has many Sensors
-db.Module.hasMany(db.Sensor)
+db.Module.hasMany(db.Sensor, {
+  foreignKey: "module_id"
+})
 db.Sensor.belongsTo(db.Module, {
   foreignKey: "module_id"
+})
+
+//One Sensor has many SensorReadings
+db.Sensor.hasMany(db.SensorReading, {
+  foreignKey: "sensor_id"
+})
+db.SensorReading.belongsTo(db.Sensor, {
+  foreignKey: "sensor_id"
 })
 
 export default db

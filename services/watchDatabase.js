@@ -14,7 +14,7 @@ async function watchDatabase(clients) {
     const lastSecond = new Date(currentTime - 1000) // Get time 1 second ago
 
     //Query the database for entries created in the last second
-    const newEntries = await db.Sensor.findAll({
+    const newEntries = await db.SensorReading.findAll({
       where: {
         createdAt: {
           [db.Sequelize.Op.gt]: lastSecond
@@ -28,7 +28,7 @@ async function watchDatabase(clients) {
       await processDatabaseEntries(newEntries, clients) // Pass ws object to the processing function
 
       // Update all newEntries and set the 'processed' column to true
-      await db.Sensor.update(
+      await db.SensorReading.update(
         { processed: true },
         {
           where: {

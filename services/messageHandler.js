@@ -2,9 +2,13 @@ import {
   createModule,
   getModuleByMacAddress
 } from "../controllers/ModuleController.js"
-import { createSensorReading } from "../controllers/SensorController.js"
 
-export function handleMessage(msg, mac) {
+import { createSensor } from "../controllers/SensorController.js"
+
+import { v4 as uuidv4 } from "uuid"
+import { createSensorReading } from "../controllers/SensorReadingController.js"
+
+export function handleMessage(msg) {
   try {
     var jsonMsg = JSON.parse(msg)
   } catch (err) {
@@ -14,33 +18,37 @@ export function handleMessage(msg, mac) {
   // Initial message sent by the ESP to the server.
   // Sadly JS does not have native enum support.
   switch (jsonMsg.type) {
+    case "hello":
+      handleHelloMessage(jsonMsg)
+      break
+
     case "sensor_reading":
-      handleSensorReadingMessage(jsonMsg, mac)
+      handleSensorReadingMessage(jsonMsg)
       break
   }
 }
 
-export function createModuleMacAddress(mac_address) {
+function handleHelloMessage(msg) {
   //Check if the mac address already exists in DB, if not, create a new module
-  getModuleByMacAddress(mac_address)
-    .then((existingModule) => {
-      if (!existingModule) {
-        console.log("in here")
-        createModule(mac_address)
-          .then(console.log("Module created"))
-          .catch((err) =>
-            console.error("Could not create a module in the database", err)
-          )
-      } else {
-        console.log("Module with MAC address already exists")
-      }
-    })
-    .catch((err) =>
-      console.error("Error occurred while checking for module:", err)
-    )
+  getModuleByMacAddress(msg.mac_address).then((existingModel) => {
+    if (!existingModel) {
+      createModule(msg.mac_address)
+        .then(console.log("Module created"))
+        .catch((err) =>
+          console.error("Could not create a module in the database", err)
+        )
+
+      msg.sensors.forEach((sensor_type) => {
+        createSensor(sensor_type, msg.mac_address)
+      })
+    }
+  })
 }
 
-function handleSensorReadingMessage(msg, mac) {
-  //add to sensor table
-  createSensorReading(mac, msg.sensor_type, msg.value)
+function handleSensorReadingMessage(msg) {
+  createSensorReading(msg.sensor_id, msg.value)
+    .then(console.log("Module created"))
+    .catch((err) =>
+      console.error("Could not create a module in the database", err)
+    )
 }

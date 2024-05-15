@@ -8,11 +8,12 @@ const sequelize = new Sequelize(
   {
     host: process.env.DB_HOST || "localhost",
     dialect: "postgres"
+    // schema: "public"
   }
 )
 
 sequelize
-  .authenticate()
+  .authenticate({ force: true })
   .then(() => {
     console.log("[Server] Connection to database established successfully.")
   })
