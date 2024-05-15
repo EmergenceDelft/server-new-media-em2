@@ -9,6 +9,13 @@ const SensorReading = (sequelize) => {
       primaryKey: true,
       allowNull: false
     },
+    sensor_id: {
+      type: DataTypes.STRING,
+      references: {
+        model: "sensors",
+        key: "id"
+      }
+    },
     value: {
       type: DataTypes.INTEGER,
       allowNull: false

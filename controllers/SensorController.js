@@ -1,4 +1,6 @@
-import Sensor from "../models/Sensor"
+import db from "../models/index.js"
+
+const Sensor = db.Sensor
 
 // Exports a createModule function which can be used in the app
 export async function createSensor(type, module_id) {

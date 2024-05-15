@@ -1,4 +1,6 @@
-import SensorReading from "../models/sSensorReading"
+import db from "../models/index.js"
+
+const SensorReading = db.SensorReading
 
 // Exports a createModule function which can be used in the app
 export async function createSensorReading(sensor_id, value) {

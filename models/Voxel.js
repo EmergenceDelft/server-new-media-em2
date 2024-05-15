@@ -7,6 +7,13 @@ const Voxel = (sequelize) => {
       primaryKey: true,
       allowNull: false
     },
+    module_id: {
+      type: DataTypes.STRING,
+      references: {
+        model: "modules",
+        key: "id"
+      }
+    },
     isOn: {
       type: DataTypes.BOOLEAN
     },

@@ -12,7 +12,7 @@ const sequelize = new Sequelize(
 )
 
 sequelize
-  .authenticate()
+  .authenticate({ force: true })
   .then(() => {
     console.log("[Server] Connection to database established successfully.")
   })
