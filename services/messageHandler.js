@@ -9,7 +9,7 @@ import { createSensorReading } from "../controllers/SensorReadingController.js"
 
 import { createMotor } from "../controllers/MotorController.js"
 
-export function handleMessage(msg) {
+export function handleMessage(msg, ws) {
   try {
     var jsonMsg = JSON.parse(msg)
   } catch (err) {
@@ -20,7 +20,7 @@ export function handleMessage(msg) {
   // Sadly JS does not have native enum support.
   switch (jsonMsg.type) {
     case "hello":
-      handleHelloMessage(jsonMsg)
+      handleHelloMessage(jsonMsg, ws)
       break
 
     case "sensor_reading":
@@ -29,8 +29,9 @@ export function handleMessage(msg) {
   }
 }
 
-function handleHelloMessage(msg) {
+function handleHelloMessage(msg, ws) {
   //Check if the mac address already exists in DB, if not, create a new module
+  ws.mac_address = msg.mac_address
   getModuleByMacAddress(msg.mac_address).then((existingModel) => {
     if (!existingModel) {
       createModule(msg.mac_address)

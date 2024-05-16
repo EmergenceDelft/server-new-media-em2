@@ -46,7 +46,7 @@ app.ws("/echo", async function (ws, req) {
   ws.on("message", async function (msg) {
     try {
       console.log("handling")
-      handleMessage(msg)
+      handleMessage(msg, ws)
       console.log("done handling")
       //await updateModule(mac, true)
     } catch (error) {
