@@ -5,8 +5,9 @@ import {
 
 import { createSensor } from "../controllers/SensorController.js"
 
-import { v4 as uuidv4 } from "uuid"
 import { createSensorReading } from "../controllers/SensorReadingController.js"
+
+import { createMotor } from "../controllers/MotorController.js"
 
 export function handleMessage(msg) {
   try {
@@ -40,7 +41,21 @@ function handleHelloMessage(msg) {
 
       msg.sensors.forEach((sensor_type) => {
         createSensor(sensor_type, msg.mac_address)
+          .then(console.log(sensor_type + "Sensor created"))
+          .catch((err) =>
+            console.error("Could not create a sensor in the database", err)
+          )
       })
+
+      if (!Number.isInteger(msg.motor_amount) || msg.motor_amount <= 0) {
+        throw new Error("Invalid motor amount.")
+      }
+
+      for (let i = 0; i < msg.motor_amount; i++) {
+        createMotor(msg.mac_address, i)
+          .then(console.log(i + "th motor created"))
+          .catch((err) => console.error("could not create motor", err))
+      }
     }
   })
 }
