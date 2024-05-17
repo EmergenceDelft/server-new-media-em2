@@ -70,13 +70,14 @@ setInterval(async () => {
   }
 }, 10000)
 
+const pollingInterval = 1000
 setInterval(async () => {
   try {
-    await watchDatabase(clients)
+    await watchDatabase(clients, pollingInterval)
   } catch (err) {
     console.error("Error watching database", err)
   }
-}, 1000)
+}, pollingInterval)
 //this runs watching the database every second, and
 //then watchDatabase(clients) doesn't have a while true loop anymore
 //this is done this way in order to make sure that the clients object is passed to watchDatabase as often as possible

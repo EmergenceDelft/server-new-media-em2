@@ -3,15 +3,14 @@
 import db from "../models/index.js" // Assuming this imports your Sequelize models
 import { processDatabaseEntries } from "./processingService.js" // Function to process database entries
 
-const processInterval = 5000 // Interval in milliseconds (e.g., 5000 ms = 5 seconds)
 let flip = true
 // Modify the function to accept the ws object as a parameter
-async function watchDatabase(clients) {
+async function watchDatabase(clients, pollingInterval) {
   try {
     // Run this indefinitely
     // while (true) {
     const currentTime = new Date()
-    const lastSecond = new Date(currentTime - 1000) // Get time 1 second ago
+    const lastSecond = new Date(currentTime - pollingInterval) // Get time 1 second ago
 
     //Query the database for entries created in the last second
     const newEntries = await db.SensorReading.findAll({

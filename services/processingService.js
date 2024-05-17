@@ -1,56 +1,58 @@
 import db from "../models/index.js" // Assuming this imports your Sequelize models
+import sequelize from "../services/db.js"
 
 export async function processDatabaseEntries(newEntries, clients, flip) {
-  // clients.forEach((ws) => {
-  //   if (newEntries.length > 0) {
-  //     ws.send(newEntries.length + " new sensor data")
-  //     console.log(newEntries.length + " new sensor data")
-  //     // There are new entries
-  //     newEntries.forEach((entry) => {
-  //       const data = entry.dataValues
+  const updatedMotors = await updateMotors(newEntries, clients, flip)
+  //json.stringify(updatedMotors)??
+  //how to get updated motors
+  //console.log(updatedMotors)
 
-  //       ws.send(JSON.stringify(data))
-  //     })
-  //   } else {
-  //     // No new entries
-  //     //ws.send("No new entries found")
-  //   }
-  // })
+  const macs = updatedMotors.map((x) => x.dataValues.module_mac_address)
+  console.log(macs)
 
-  // const isOverThreshold = newEntries.some((reading) => reading.value > 0.5)
-  // console.log(isOverThreshold)
+  //now i want to send to each web socket connection the updated motors that it's interested about
+  //do that by matching ws.mac_address with updatedMotors
 
-  // if (isOverThreshold) {
-  //   try {
-  //     // Create or update the Motor object with an angle of 90 degrees
-  //     await db.Motor.update(
-  //       { angle: 90 }, // Set the angle column to 90
-  //       { where: {} } // Condition to update all rows (no specific condition)
-  //     )
+  for (let i = 0; i < clients.length; i++) {
+    const wsi = clients[i]
+    const mac_websocket = wsi.mac_address
+    const filteredMotorsDegrees = updatedMotors
+      .filter((x) => x.dataValues.module_mac_address == mac_websocket)
+      .map((x) => x.dataValues.angle)
+    wsi.send(JSON.stringify(filteredMotorsDegrees))
+  }
+}
 
-  //     console.log("All motors updated succesfully")
-  //   } catch (error) {
-  //     console.error("Error updating Motors object:", error)
-  //   }
-  // } else {
-  //   console.log("No sensor reading is over the threshold.")
-  // }
-
-  // const updatedMotors = await db.Motor.findAll()
-  // const jsonData = JSON.stringify(updatedMotors)
-  // clients.forEach((ws) => {
-  //   if (newEntries.length > 0) {
-  //     ws.send(jsonData)
-  //   }
-  // })
-
-  const isOverThreshold = newEntries.some((reading) => reading.value > 10)
+async function updateMotors(newEntries, clients, flip) {
+  const isOverThreshold = newEntries.some((reading) => reading.value > 0.1)
   console.log(isOverThreshold)
+  console.log("these are the clients ", clients)
+  let macs = clients.map((client) => client.mac_address)
+  console.log(macs)
 
+  const transaction = await sequelize.transaction()
   if (isOverThreshold) {
-    for (let i = 0; i < clients.length; i++) {
-      const wsi = clients[i]
-      wsi.send(flip ? 90 : 0)
+    try {
+      // Create or update the Motor object with an angle of 90 degrees
+      const [numberOfAffectedRows, affectedRows] = await db.Motor.update(
+        { angle: flip ? 90 : 0 }, // Set the angle column to 90
+        {
+          where: {
+            module_mac_address: macs
+          },
+          returning: true,
+          transaction
+        } // sequelize interprets this as module_mac_address matches at least one value in macs
+      )
+      await transaction.commit()
+      console.log("All motors updated succesfully")
+      console.log("updated rows: ", affectedRows)
+      return affectedRows
+    } catch (error) {
+      await transaction.rollback()
+      console.error("Error updating Motors object:", error)
     }
+  } else {
+    console.log("No sensor reading is over the threshold.")
   }
 }
