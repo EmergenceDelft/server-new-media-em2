@@ -6,20 +6,22 @@ export async function processDatabaseEntries(newEntries, clients, flip) {
   //json.stringify(updatedMotors)??
   //how to get updated motors
   //console.log(updatedMotors)
+  console.log(updatedMotors)
+  if (updatedMotors) {
+    const macs = updatedMotors.map((x) => x.dataValues.module_mac_address)
+    console.log(macs)
 
-  const macs = updatedMotors.map((x) => x.dataValues.module_mac_address)
-  console.log(macs)
+    //now i want to send to each web socket connection the updated motors that it's interested about
+    //do that by matching ws.mac_address with updatedMotors
 
-  //now i want to send to each web socket connection the updated motors that it's interested about
-  //do that by matching ws.mac_address with updatedMotors
-
-  for (let i = 0; i < clients.length; i++) {
-    const wsi = clients[i]
-    const mac_websocket = wsi.mac_address
-    const filteredMotorsDegrees = updatedMotors
-      .filter((x) => x.dataValues.module_mac_address == mac_websocket)
-      .map((x) => x.dataValues.angle)
-    wsi.send(JSON.stringify(filteredMotorsDegrees))
+    for (let i = 0; i < clients.length; i++) {
+      const wsi = clients[i]
+      const mac_websocket = wsi.mac_address
+      const filteredMotorsDegrees = updatedMotors
+        .filter((x) => x.dataValues.module_mac_address == mac_websocket)
+        .map((x) => x.dataValues.angle)
+      wsi.send(JSON.stringify(filteredMotorsDegrees))
+    }
   }
 }
 
