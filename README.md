@@ -7,13 +7,14 @@ the server sends a message with the current timestamp to every connected client,
 
 message structure that server can handle
 
+//inputs
 {
 "type": "hello",
 "mac_address": "ec:07:9c:99:6c:a9",
 "sensors": [
 "ULTRASOUND"
 ],
-"motor_amount": 5
+"voxel_amount": 5
 }
 
 {
@@ -21,3 +22,7 @@ message structure that server can handle
 "sensor_id": "ec:07:9c:99:6c:a9//ULTRASOUND",
 "value": 0.111
 }
+
+//outputs
+[0,0,0,0,0]
+or [90,90,90,90,90]

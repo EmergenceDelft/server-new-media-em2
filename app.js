@@ -121,13 +121,6 @@ setInterval(async () => {
 //this is done this way in order to make sure that the clients object is passed to watchDatabase as often as possible
 const PORT = process.env.PORT || 3000
 
-sequelize
-  .sync({ force: true })
-  .then(() => {
-    app.listen(PORT, () => {
-      console.log(`Server running on port ${PORT}`)
-    })
-  })
-  .catch((err) => {
-    console.error("Failed to sync database:", err)
-  })
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})
