@@ -7,6 +7,9 @@ the server sends a message with the current timestamp to every connected client,
 
 message structure that server can handle
 
+NR OF VOXELS PER MODULE: 5
+NR OF MOTORS PER MODULE: 10
+
 //inputs
 {
 "type": "hello",
@@ -14,7 +17,7 @@ message structure that server can handle
 "sensors": [
 "ULTRASOUND"
 ],
-"voxel_amount": 5
+
 }
 
 {
@@ -24,5 +27,15 @@ message structure that server can handle
 }
 
 //outputs
-[0,0,0,0,0]
-or [90,90,90,90,90]
+{
+motors: [
+{
+motor_address: 0
+angle: 90
+},
+{
+address: 2
+angle: 90
+},
+]
+}

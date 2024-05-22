@@ -17,10 +17,10 @@ const Voxel = (sequelize) => {
     isOn: {
       type: DataTypes.BOOLEAN
     },
-    position_x: {
+    level: {
       type: DataTypes.INTEGER
     },
-    position_y: {
+    side: {
       type: DataTypes.INTEGER
     }
   })

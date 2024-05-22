@@ -6,7 +6,7 @@ const Motor = db.Motor
 export async function createMotor(mac, cnt) {
   try {
     Motor.create({
-      id: mac + "//" + cnt,
+      id: mac + "::" + cnt,
       module_mac_address: mac
     })
   } catch (error) {

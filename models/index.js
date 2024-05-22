@@ -37,11 +37,11 @@ db.Sensor.belongsTo(db.Module, {
 })
 
 //one Module has many motors
-db.Module.hasMany(db.Motor, {
-  foreignKey: "module_mac_address"
+db.Voxel.hasMany(db.Motor, {
+  foreignKey: "voxel_id"
 })
-db.Motor.belongsTo(db.Module, {
-  foreignKey: "module_mac_address"
+db.Motor.belongsTo(db.Voxel, {
+  foreignKey: "voxel_id"
 })
 //One Sensor has many SensorReadings
 db.Sensor.hasMany(db.SensorReading, {
