@@ -2,6 +2,8 @@ import express from "express"
 import expressWs from "express-ws"
 import sequelize from "./services/db.js"
 import watchDatabase from "./services/watchDatabase.js"
+import fetchDbRoutes from "./routes/fetchDbRoutes.js"
+import db from "./models/index.js" // Assuming this imports your Sequelize models
 
 import {
   updateAllConnections,
@@ -12,30 +14,33 @@ import { handleMessage } from "./services/messageHandler.js"
 var app = express()
 var ws = expressWs(app)
 
+app.set("view engine", "ejs")
+
 //Sync database
-sequelize
-  .sync()
+await sequelize
+  .sync({ force: true })
   .then(() => {})
   .catch((err) => {
     console.log(err)
   })
 
-var clients = []
+export var clients = []
 
 app.use(function (req, _res, next) {
-  console.log("middleware")
   req.testing = "testing"
   return next()
 })
 
-app.get("/", function (req, res) {
-  console.log("get route", req.testing)
-  res.end()
+app.use(fetchDbRoutes)
+
+app.get("/", async (req, res) => {
+  res.render("index")
 })
 
 app.ws("/echo", async function (ws, req) {
   console.log("hiiiiiiiiii")
-  clients.push(ws)
+  const time = Date.now()
+  clients.push({ ws, time })
 
   //const mac = req.query.mac_address
 
@@ -46,7 +51,7 @@ app.ws("/echo", async function (ws, req) {
   ws.on("message", async function (msg) {
     try {
       console.log("handling")
-      handleMessage(msg)
+      handleMessage(msg, ws)
       console.log("done handling")
       //await updateModule(mac, true)
     } catch (error) {
@@ -57,7 +62,7 @@ app.ws("/echo", async function (ws, req) {
   ws.on("close", function () {
     // Remove the WebSocket client from the array when disconnected
     //updateModule(mac, false)
-    clients = clients.filter((client) => client !== ws)
+    clients = clients.filter((client) => client.ws !== ws)
   })
 })
 
@@ -70,14 +75,20 @@ setInterval(async () => {
   }
 }, 10000)
 
+const pollingInterval = 500
 setInterval(async () => {
   try {
-    await watchDatabase(clients)
+    const clientsWithoutTime = clients.map(({ ws, time }) => ws)
+    await watchDatabase(clientsWithoutTime, pollingInterval)
   } catch (err) {
     console.error("Error watching database", err)
   }
-}, 1000)
+}, pollingInterval)
 //this runs watching the database every second, and
 //then watchDatabase(clients) doesn't have a while true loop anymore
 //this is done this way in order to make sure that the clients object is passed to watchDatabase as often as possible
-app.listen(3000)
+const PORT = process.env.PORT || 3000
+
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
+})

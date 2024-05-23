@@ -10,6 +10,10 @@ const Module = (sequelize) => {
     connection_alive: {
       type: DataTypes.BOOLEAN,
       defaultValue: true
+    },
+    orientation: {
+      type: DataTypes.INTEGER,
+      default: 0
     }
   })
   return Module

@@ -5,10 +5,15 @@ import {
 
 import { createSensor } from "../controllers/SensorController.js"
 
-import { v4 as uuidv4 } from "uuid"
 import { createSensorReading } from "../controllers/SensorReadingController.js"
 
-export function handleMessage(msg) {
+import { createMotor } from "../controllers/MotorController.js"
+import { createVoxel } from "../controllers/VoxelController.js"
+
+const MOTOR_AMOUNT = 10
+const VOXEL_AMOUNT = 5
+
+export function handleMessage(msg, ws) {
   try {
     var jsonMsg = JSON.parse(msg)
   } catch (err) {
@@ -19,7 +24,7 @@ export function handleMessage(msg) {
   // Sadly JS does not have native enum support.
   switch (jsonMsg.type) {
     case "hello":
-      handleHelloMessage(jsonMsg)
+      handleHelloMessage(jsonMsg, ws)
       break
 
     case "sensor_reading":
@@ -28,8 +33,9 @@ export function handleMessage(msg) {
   }
 }
 
-function handleHelloMessage(msg) {
+function handleHelloMessage(msg, ws) {
   //Check if the mac address already exists in DB, if not, create a new module
+  ws.mac_address = msg.mac_address
   getModuleByMacAddress(msg.mac_address).then((existingModel) => {
     if (!existingModel) {
       createModule(msg.mac_address)
@@ -40,7 +46,21 @@ function handleHelloMessage(msg) {
 
       msg.sensors.forEach((sensor_type) => {
         createSensor(sensor_type, msg.mac_address)
+          .then(console.log(sensor_type + "Sensor created"))
+          .catch((err) =>
+            console.error("Could not create a sensor in the database", err)
+          )
       })
+
+      for (let i = 0; i < VOXEL_AMOUNT; i++) {
+        createVoxel(msg.mac_address, i)
+          .then(console.log("Voxel created"))
+          .then((voxelId) => {
+            createMotor(voxelId, 0)
+            createMotor(voxelId, 1)
+            console.log("2 Motors created")
+          })
+      }
     }
   })
 }

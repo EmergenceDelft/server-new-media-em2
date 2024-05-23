@@ -12,11 +12,13 @@ import Module from "./Module.js"
 import Voxel from "./Voxel.js"
 import Sensor from "./Sensor.js"
 import SensorReading from "./SensorReading.js"
+import Motor from "./Motor.js"
 
 db.Module = Module(sequelize, Sequelize)
 db.Voxel = Voxel(sequelize, Sequelize)
 db.Sensor = Sensor(sequelize, Sequelize)
 db.SensorReading = SensorReading(sequelize, Sequelize)
+db.Motor = Motor(sequelize, Sequelize)
 
 //One Module has many Voxels
 db.Module.hasMany(db.Voxel, {
@@ -34,6 +36,13 @@ db.Sensor.belongsTo(db.Module, {
   foreignKey: "module_id"
 })
 
+//one Module has many motors
+db.Voxel.hasMany(db.Motor, {
+  foreignKey: "voxel_id"
+})
+db.Motor.belongsTo(db.Voxel, {
+  foreignKey: "voxel_id"
+})
 //One Sensor has many SensorReadings
 db.Sensor.hasMany(db.SensorReading, {
   foreignKey: "sensor_id"

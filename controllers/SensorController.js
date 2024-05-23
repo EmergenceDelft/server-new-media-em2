@@ -3,12 +3,13 @@ import db from "../models/index.js"
 const Sensor = db.Sensor
 
 // Exports a createModule function which can be used in the app
-export async function createSensor(type, mac) {
+export async function createSensor(ty, mac) {
   try {
+    console.log("this is the type and mac " + ty + " " + mac)
     Sensor.create({
-      id: mac + "//" + type,
-      module_mac_address: mac,
-      type: type
+      id: mac + "::" + ty,
+      module_id: mac,
+      type: ty
     }).then(console.log("Sensor created!"))
   } catch (error) {
     console.log(error)
