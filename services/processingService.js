@@ -26,9 +26,23 @@ export async function processDatabaseEntries(newEntries, clients, flip) {
             x.dataValues.voxel_id.slice(0, macAddressLength) == mac_websocket
         )
         .map((x) => x.dataValues.angle)
-      wsi.send(JSON.stringify(filteredMotorsDegrees))
+
+      wsi.send(motorsToJson(filteredMotorsDegrees))
     }
   }
+}
+
+function motorsToJson(filteredMotors) {
+  const jsonMotorsArray = filteredMotors.map((angle, index) => ({
+    motor_address: index,
+    angle: angle
+  }))
+
+  const jsonMotorFinal = {
+    motors: jsonMotorsArray
+  }
+
+  return JSON.stringify(jsonMotorFinal)
 }
 
 async function updateMotors(newEntries, clients, flip) {
