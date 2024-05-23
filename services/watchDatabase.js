@@ -7,12 +7,10 @@ let flip = true
 // Modify the function to accept the ws object as a parameter
 async function watchDatabase(clients, pollingInterval) {
   try {
-    // Run this indefinitely
-    // while (true) {
     const currentTime = new Date()
-    const lastSecond = new Date(currentTime - pollingInterval) // Get time 1 second ago
+    const lastSecond = new Date(currentTime - pollingInterval) // get time of last database polling
 
-    //Query the database for entries created in the last second
+    //Query the database for entries created in the last pollingInterval
     const newEntries = await db.SensorReading.findAll({
       where: {
         createdAt: {
@@ -24,6 +22,7 @@ async function watchDatabase(clients, pollingInterval) {
 
     // Process the new entries
     if (newEntries.length > 0) {
+      //communicating to the motors happens inside ProcessDatabaseEntries
       await processDatabaseEntries(newEntries, clients, flip) // Pass ws object to the processing function
       flip = !flip
       // Update all newEntries and set the 'processed' column to true

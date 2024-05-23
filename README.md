@@ -22,7 +22,7 @@ NR OF MOTORS PER MODULE: 10
 
 {
 "type": "sensor_reading",
-"sensor_id": "ec:07:9c:99:6c:a9//ULTRASOUND",
+"sensor_id": "ec:07:9c:99:6c:a9::ULTRASOUND",
 "value": 0.111
 }
 

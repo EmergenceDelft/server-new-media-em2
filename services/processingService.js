@@ -1,14 +1,17 @@
 import db from "../models/index.js" // Assuming this imports your Sequelize models
 import sequelize from "../services/db.js"
+import { Op } from "sequelize"
+
+const macAddressLength = 17
 
 export async function processDatabaseEntries(newEntries, clients, flip) {
   const updatedMotors = await updateMotors(newEntries, clients, flip)
-  //json.stringify(updatedMotors)??
-  //how to get updated motors
-  //console.log(updatedMotors)
+
   console.log(updatedMotors)
   if (updatedMotors) {
-    const macs = updatedMotors.map((x) => x.dataValues.module_mac_address)
+    const macs = updatedMotors.map((x) =>
+      x.dataValues.voxel_id.slice(0, macAddressLength)
+    )
     console.log(macs)
 
     //now i want to send to each web socket connection the updated motors that it's interested about
@@ -18,7 +21,10 @@ export async function processDatabaseEntries(newEntries, clients, flip) {
       const wsi = clients[i]
       const mac_websocket = wsi.mac_address
       const filteredMotorsDegrees = updatedMotors
-        .filter((x) => x.dataValues.module_mac_address == mac_websocket)
+        .filter(
+          (x) =>
+            x.dataValues.voxel_id.slice(0, macAddressLength) == mac_websocket
+        )
         .map((x) => x.dataValues.angle)
       wsi.send(JSON.stringify(filteredMotorsDegrees))
     }
@@ -30,17 +36,27 @@ async function updateMotors(newEntries, clients, flip) {
   console.log(isOverThreshold)
   console.log("these are the clients ", clients)
   let macs = clients.map((client) => client.mac_address)
+
   console.log(macs)
 
   const transaction = await sequelize.transaction()
   if (isOverThreshold) {
     try {
-      // Create or update the Motor object with an angle of 90 degrees
+      const macConditions = macs.map((mac) => ({
+        voxel_id: {
+          [Op.like]: `%${mac}%`
+        }
+      }))
+      // we can no longer do this since Motors do not have module_mac_address
+      // should we do one extra query or add a redundant field into Motor creation
+
+      //try to extract mac from voxel_id
+
       const [numberOfAffectedRows, affectedRows] = await db.Motor.update(
         { angle: flip ? 90 : 0 }, // Set the angle column to 90
         {
           where: {
-            module_mac_address: macs
+            [Op.or]: macConditions
           },
           returning: true,
           transaction
