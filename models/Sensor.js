@@ -7,7 +7,7 @@ const Sensor = (sequelize) => {
       primaryKey: true,
       allowNull: false
     },
-    module_mac_address: {
+    module_id: {
       type: DataTypes.STRING,
       references: {
         model: "modules",

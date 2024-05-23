@@ -3,11 +3,11 @@ import db from "../models/index.js"
 const Motor = db.Motor
 
 // Exports a createModule function which can be used in the app
-export async function createMotor(mac, cnt) {
+export async function createMotor(voxel_id, cnt) {
   try {
     Motor.create({
-      id: mac + "::" + cnt,
-      module_mac_address: mac
+      id: voxel_id + "::MOTOR_" + cnt,
+      voxel_id: voxel_id
     })
   } catch (error) {
     console.log(error)

@@ -8,7 +8,7 @@ export async function createSensor(ty, mac) {
     console.log("this is the type and mac " + ty + " " + mac)
     Sensor.create({
       id: mac + "::" + ty,
-      module_mac_address: mac,
+      module_id: mac,
       type: ty
     }).then(console.log("Sensor created!"))
   } catch (error) {

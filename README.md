@@ -8,6 +8,7 @@ the server sends a message with the current timestamp to every connected client,
 message structure that server can handle
 
 NR OF VOXELS PER MODULE: 5
+5 levels
 NR OF MOTORS PER MODULE: 10
 
 //inputs
@@ -16,8 +17,7 @@ NR OF MOTORS PER MODULE: 10
 "mac_address": "ec:07:9c:99:6c:a9",
 "sensors": [
 "ULTRASOUND"
-],
-
+]
 }
 
 {

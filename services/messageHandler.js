@@ -8,6 +8,10 @@ import { createSensor } from "../controllers/SensorController.js"
 import { createSensorReading } from "../controllers/SensorReadingController.js"
 
 import { createMotor } from "../controllers/MotorController.js"
+import { createVoxel } from "../controllers/VoxelController.js"
+
+const MOTOR_AMOUNT = 10
+const VOXEL_AMOUNT = 5
 
 export function handleMessage(msg, ws) {
   try {
@@ -48,14 +52,14 @@ function handleHelloMessage(msg, ws) {
           )
       })
 
-      if (!Number.isInteger(msg.motor_amount) || msg.motor_amount <= 0) {
-        throw new Error("Invalid motor amount.")
-      }
-
-      for (let i = 0; i < msg.motor_amount; i++) {
-        createMotor(msg.mac_address, i)
-          .then(console.log(i + "th motor created"))
-          .catch((err) => console.error("could not create motor", err))
+      for (let i = 0; i < VOXEL_AMOUNT; i++) {
+        createVoxel(msg.mac_address, i)
+          .then(console.log("Voxel created"))
+          .then((voxelId) => {
+            createMotor(voxelId, 0)
+            createMotor(voxelId, 1)
+            console.log("2 Motors created")
+          })
       }
     }
   })

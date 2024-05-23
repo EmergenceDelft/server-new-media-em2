@@ -1,7 +1,7 @@
 import { DataTypes } from "sequelize"
 
 const Voxel = (sequelize) => {
-  return sequelize.define("voxel", {
+  const Voxel = sequelize.define("voxel", {
     id: {
       type: DataTypes.STRING,
       primaryKey: true,
@@ -15,7 +15,8 @@ const Voxel = (sequelize) => {
       }
     },
     isOn: {
-      type: DataTypes.BOOLEAN
+      type: DataTypes.BOOLEAN,
+      default: false
     },
     level: {
       type: DataTypes.INTEGER
@@ -24,6 +25,7 @@ const Voxel = (sequelize) => {
       type: DataTypes.INTEGER
     }
   })
+  return Voxel
 }
 
 export default Voxel
