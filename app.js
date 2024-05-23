@@ -17,8 +17,8 @@ var ws = expressWs(app)
 app.set("view engine", "ejs")
 
 //Sync database
-sequelize
-  .sync()
+await sequelize
+  .sync({ force: true })
   .then(() => {})
   .catch((err) => {
     console.log(err)
@@ -75,7 +75,7 @@ setInterval(async () => {
   }
 }, 10000)
 
-const pollingInterval = 100
+const pollingInterval = 500
 setInterval(async () => {
   try {
     const clientsWithoutTime = clients.map(({ ws, time }) => ws)

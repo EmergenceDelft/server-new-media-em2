@@ -22,14 +22,4 @@ sequelize
     console.error(err)
   })
 
-sequelize
-  .sync({ force: true })
-  .then(() => {
-    console.log("[Server] Tables dropped successfully")
-  })
-  .catch((err) => {
-    console.error("%c[Server] Failed to drop tables")
-    console.error(err)
-  })
-
 export default sequelize
