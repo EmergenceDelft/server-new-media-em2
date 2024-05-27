@@ -8,7 +8,7 @@ export async function createVoxel(mac, cnt) {
   try {
     await Voxel.create({
       id: newId,
-      module_id: mac
+      moduleId: mac
     })
     return newId
   } catch (error) {

@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize"
 
 const Module = (sequelize) => {
   const Module = sequelize.define("module", {
-    mac_address: {
+    id: {
       type: DataTypes.STRING,
       primaryKey: true,
       allowNull: false
