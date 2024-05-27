@@ -46,7 +46,7 @@ function motorsToJson(filteredMotors) {
 }
 
 async function updateMotors(newEntries, clients, flip) {
-  const isOverThreshold = newEntries.some((reading) => reading.value >= 0)
+  const isOverThreshold = newEntries.some((reading) => reading.value >= 0.1)
   console.log("threshold?")
   console.log(isOverThreshold)
   let macs = clients.map((client) => client.mac_address)

@@ -66,9 +66,11 @@ function handleHelloMessage(msg, ws) {
 }
 
 function handleSensorReadingMessage(msg) {
+  console.log("value received")
+  console.log(msg.value)
   createSensorReading(msg.sensor_id, msg.value)
-    .then(console.log("Module created"))
+    .then(console.log("Sensor reading created"))
     .catch((err) =>
-      console.error("Could not create a module in the database", err)
+      console.error("Could not create a sensor reading in the database", err)
     )
 }
