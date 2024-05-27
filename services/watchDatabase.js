@@ -7,6 +7,7 @@ let flip = true
 // Modify the function to accept the ws object as a parameter
 async function watchDatabase(clients, pollingInterval) {
   try {
+    console.log("watching database")
     const currentTime = new Date()
     const lastSecond = new Date(currentTime - pollingInterval) // get time of last database polling
 

@@ -46,15 +46,15 @@ function motorsToJson(filteredMotors) {
 }
 
 async function updateMotors(newEntries, clients, flip) {
-  const isOverThreshold = newEntries.some((reading) => reading.value > 0.1)
+  const isOverThreshold = newEntries.some((reading) => reading.value >= 0)
   console.log("threshold?")
   console.log(isOverThreshold)
   let macs = clients.map((client) => client.mac_address)
 
   console.log(macs)
 
-  const transaction = await sequelize.transaction()
   if (isOverThreshold) {
+    const transaction = await sequelize.transaction()
     try {
       const macConditions = macs.map((mac) => ({
         voxelId: {
@@ -85,5 +85,6 @@ async function updateMotors(newEntries, clients, flip) {
     }
   } else {
     console.log("No sensor reading is over the threshold.")
+    return null
   }
 }
