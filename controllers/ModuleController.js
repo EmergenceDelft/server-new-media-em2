@@ -7,7 +7,7 @@ export async function getModuleByMacAddress(mac_address) {
     console.log("looking up mac address")
     return await Module.findOne({
       where: {
-        mac_address: mac_address
+        id: mac_address
       }
     })
   } catch (error) {
@@ -19,7 +19,7 @@ export async function getModuleByMacAddress(mac_address) {
 export async function createModule(mac_address) {
   try {
     Module.create({
-      mac_address: mac_address,
+      id: mac_address,
       connection_alive: true
     }).then(console.log("Module created with mac address" + mac_address))
   } catch (error) {

@@ -7,10 +7,9 @@ const macAddressLength = 17
 export async function processDatabaseEntries(newEntries, clients, flip) {
   const updatedMotors = await updateMotors(newEntries, clients, flip)
 
-  console.log(updatedMotors)
   if (updatedMotors) {
     const macs = updatedMotors.map((x) =>
-      x.dataValues.voxel_id.slice(0, macAddressLength)
+      x.dataValues.voxelId.slice(0, macAddressLength)
     )
     console.log(macs)
 
@@ -23,7 +22,7 @@ export async function processDatabaseEntries(newEntries, clients, flip) {
       const filteredMotorsDegrees = updatedMotors
         .filter(
           (x) =>
-            x.dataValues.voxel_id.slice(0, macAddressLength) == mac_websocket
+            x.dataValues.voxelId.slice(0, macAddressLength) == mac_websocket
         )
         .map((x) => x.dataValues.angle)
 
@@ -39,6 +38,7 @@ function motorsToJson(filteredMotors) {
   }))
 
   const jsonMotorFinal = {
+    type: "motor_commands",
     motors: jsonMotorsArray
   }
 
@@ -46,18 +46,18 @@ function motorsToJson(filteredMotors) {
 }
 
 async function updateMotors(newEntries, clients, flip) {
-  const isOverThreshold = newEntries.some((reading) => reading.value > 0.1)
+  const isOverThreshold = newEntries.some((reading) => reading.value >= 0.1)
+  console.log("threshold?")
   console.log(isOverThreshold)
-  console.log("these are the clients ", clients)
   let macs = clients.map((client) => client.mac_address)
 
   console.log(macs)
 
-  const transaction = await sequelize.transaction()
   if (isOverThreshold) {
+    const transaction = await sequelize.transaction()
     try {
       const macConditions = macs.map((mac) => ({
-        voxel_id: {
+        voxelId: {
           [Op.like]: `%${mac}%`
         }
       }))
@@ -78,7 +78,6 @@ async function updateMotors(newEntries, clients, flip) {
       )
       await transaction.commit()
       console.log("All motors updated succesfully")
-      console.log("updated rows: ", affectedRows)
       return affectedRows
     } catch (error) {
       await transaction.rollback()
@@ -86,5 +85,6 @@ async function updateMotors(newEntries, clients, flip) {
     }
   } else {
     console.log("No sensor reading is over the threshold.")
+    return null
   }
 }

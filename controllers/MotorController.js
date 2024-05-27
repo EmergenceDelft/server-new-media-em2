@@ -7,7 +7,7 @@ export async function createMotor(voxel_id, cnt) {
   try {
     Motor.create({
       id: voxel_id + "::MOTOR_" + cnt,
-      voxel_id: voxel_id
+      voxelId: voxel_id
     })
   } catch (error) {
     console.log(error)

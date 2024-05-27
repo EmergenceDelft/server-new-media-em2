@@ -28,6 +28,7 @@ NR OF MOTORS PER MODULE: 10
 
 //outputs
 {
+type: "motor_commands"
 motors: [
 {
 motor_address: 0

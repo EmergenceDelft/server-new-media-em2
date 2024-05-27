@@ -6,7 +6,7 @@ const SensorReading = db.SensorReading
 export async function createSensorReading(sensor_id, value) {
   try {
     SensorReading.create({
-      sensor_id: sensor_id,
+      sensorId: sensor_id,
       value: value
     }).then(console.log("Sensor readings created!"))
   } catch (error) {

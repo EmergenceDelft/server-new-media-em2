@@ -7,13 +7,13 @@ const Motor = (sequelize) => {
       primaryKey: true,
       allowNull: false
     },
-    voxel_id: {
-      type: DataTypes.STRING,
-      references: {
-        model: "voxels",
-        key: "id"
-      }
-    },
+    // voxel_id: {
+    //   type: DataTypes.STRING,
+    //   // references: {
+    //   //   model: "voxels",
+    //   //   key: "id"
+    //   // }
+    // },
     angle: {
       type: DataTypes.INTEGER,
       allowNull: false,

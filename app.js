@@ -79,7 +79,7 @@ const pollingInterval = 500
 setInterval(async () => {
   try {
     const clientsWithoutTime = clients.map(({ ws, time }) => ws)
-    await watchDatabase(clientsWithoutTime, pollingInterval)
+    watchDatabase(clientsWithoutTime, pollingInterval)
   } catch (err) {
     console.error("Error watching database", err)
   }
