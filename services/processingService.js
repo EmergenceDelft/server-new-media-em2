@@ -3,9 +3,10 @@ import sequelize from "../services/db.js"
 import { Op } from "sequelize"
 
 const macAddressLength = 17
+let flip = true
 
-export async function processDatabaseEntries(newEntries, clients, flip) {
-  const updatedMotors = await updateMotors(newEntries, clients, flip)
+export async function processDatabaseEntries(newEntries, clients) {
+  const updatedMotors = await updateMotors(newEntries, clients)
 
   if (updatedMotors) {
     const macs = updatedMotors.map((x) =>
@@ -45,7 +46,7 @@ function motorsToJson(filteredMotors) {
   return JSON.stringify(jsonMotorFinal)
 }
 
-async function updateMotors(newEntries, clients, flip) {
+async function updateMotors(newEntries, clients) {
   const isOverThreshold = newEntries.some((reading) => reading.value >= 0.1)
   console.log("threshold?")
   console.log(isOverThreshold)
@@ -54,6 +55,7 @@ async function updateMotors(newEntries, clients, flip) {
   console.log(macs)
 
   if (isOverThreshold) {
+    flip = !flip
     const transaction = await sequelize.transaction()
     try {
       const macConditions = macs.map((mac) => ({
