@@ -55,7 +55,7 @@ async function updateMotors(newEntries, clients) {
   console.log(macs)
 
   if (isOverThreshold) {
-    flip = !flip
+    // flip = !flip
     const transaction = await sequelize.transaction()
     try {
       const macConditions = macs.map((mac) => ({
@@ -69,7 +69,7 @@ async function updateMotors(newEntries, clients) {
       //try to extract mac from voxel_id
 
       const [numberOfAffectedRows, affectedRows] = await db.Motor.update(
-        { angle: flip ? 90 : 0 }, // Set the angle column to 90
+        { angle: 90 }, // Set the angle column to 90
         {
           where: {
             [Op.or]: macConditions
@@ -86,7 +86,34 @@ async function updateMotors(newEntries, clients) {
       console.error("Error updating Motors object:", error)
     }
   } else {
-    console.log("No sensor reading is over the threshold.")
-    return null
+    const transaction = await sequelize.transaction()
+    try {
+      const macConditions = macs.map((mac) => ({
+        voxelId: {
+          [Op.like]: `%${mac}%`
+        }
+      }))
+      // we can no longer do this since Motors do not have module_mac_address
+      // should we do one extra query or add a redundant field into Motor creation
+
+      //try to extract mac from voxel_id
+
+      const [numberOfAffectedRows, affectedRows] = await db.Motor.update(
+        { angle: 0 }, // Set the angle column to 90
+        {
+          where: {
+            [Op.or]: macConditions
+          },
+          returning: true,
+          transaction
+        } // sequelize interprets this as module_mac_address matches at least one value in macs
+      )
+      await transaction.commit()
+      console.log("All motors updated succesfully")
+      return affectedRows
+    } catch (error) {
+      await transaction.rollback()
+      console.error("Error updating Motors object:", error)
+    }
   }
 }
