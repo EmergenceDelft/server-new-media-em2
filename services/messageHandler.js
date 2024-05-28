@@ -11,7 +11,7 @@ import { createMotor } from "../controllers/MotorController.js"
 import { createVoxel } from "../controllers/VoxelController.js"
 
 const MOTOR_AMOUNT = 10
-const VOXEL_AMOUNT = 5
+const VOXEL_AMOUNT = 2
 
 export function handleMessage(msg, ws) {
   try {

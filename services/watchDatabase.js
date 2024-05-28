@@ -3,7 +3,6 @@
 import db from "../models/index.js" // Assuming this imports your Sequelize models
 import { processDatabaseEntries } from "./processingService.js" // Function to process database entries
 
-let flip = true
 // Modify the function to accept the ws object as a parameter
 async function watchDatabase(clients, pollingInterval) {
   try {
@@ -24,8 +23,8 @@ async function watchDatabase(clients, pollingInterval) {
     // Process the new entries
     if (newEntries.length > 0) {
       //communicating to the motors happens inside ProcessDatabaseEntries
-      await processDatabaseEntries(newEntries, clients, flip) // Pass ws object to the processing function
-      flip = !flip
+      await processDatabaseEntries(newEntries, clients) // Pass ws object to the processing function
+      //flip = !flip
       // Update all newEntries and set the 'processed' column to true
       await db.SensorReading.update(
         { processed: true },
