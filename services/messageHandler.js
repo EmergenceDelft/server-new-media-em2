@@ -40,27 +40,26 @@ function handleHelloMessage(msg, ws) {
     if (!existingModel) {
       createModule(msg.mac_address)
         .then(console.log("Module created"))
-        .catch((err) =>
-          console.error("Could not create a module in the database", err)
-        )
-
-      msg.sensors.forEach((sensor_type) => {
-        createSensor(sensor_type, msg.mac_address)
-          .then(console.log(sensor_type + "Sensor created"))
-          .catch((err) =>
-            console.error("Could not create a sensor in the database", err)
-          )
-      })
-
-      for (let i = 0; i < VOXEL_AMOUNT; i++) {
-        createVoxel(msg.mac_address, i)
-          .then(console.log("Voxel created"))
-          .then((voxelId) => {
-            createMotor(voxelId, 0)
-            createMotor(voxelId, 1)
-            console.log("2 Motors created")
+        .then(() =>
+          msg.sensors.forEach((sensor_type) => {
+            createSensor(sensor_type, msg.mac_address)
+              .then(console.log(sensor_type + "Sensor created"))
+              .catch((err) =>
+                console.error("Could not create a sensor in the database", err)
+              )
           })
-      }
+        )
+        .then(() => {
+          for (let i = 0; i < VOXEL_AMOUNT; i++) {
+            createVoxel(msg.mac_address, i)
+              .then(console.log("Voxel created"))
+              .then((voxelId) => {
+                createMotor(voxelId, 0)
+                createMotor(voxelId, 1)
+                console.log("2 Motors created")
+              })
+          }
+        })
     }
   })
 }
@@ -68,7 +67,7 @@ function handleHelloMessage(msg, ws) {
 function handleSensorReadingMessage(msg) {
   console.log("value received")
   console.log(msg.value)
-  createSensorReading(msg.sensor_id, msg.value)
+  createSensorReading(msg.sensor_id, msg.value, msg.sensor_type)
     .then(console.log("Sensor reading created"))
     .catch((err) =>
       console.error("Could not create a sensor reading in the database", err)

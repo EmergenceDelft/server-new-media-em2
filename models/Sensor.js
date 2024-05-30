@@ -7,15 +7,8 @@ const Sensor = (sequelize) => {
       primaryKey: true,
       allowNull: false
     },
-    // module_id: {
-    //   type: DataTypes.STRING,
-    //   references: {
-    //     model: "modules",
-    //     key: "mac_address"
-    //   }
-    // },
     type: {
-      type: DataTypes.ENUM(["ULTRASOUND", "LOUDNESS", "CAPACITIVE"]),
+      type: DataTypes.ENUM(["ULTRASOUND", "MICROPHONE", "CAPACITIVE"]),
       allowNull: false
     }
   })

@@ -18,7 +18,7 @@ export async function processDatabaseEntries(newEntries, clients) {
         )
         .map((x) => x.dataValues.angle)
 
-      wsi.send(motorsToJson(filteredMotorsDegrees))
+      clients[i].send(motorsToJson(filteredMotorsDegrees))
     }
   }
 }

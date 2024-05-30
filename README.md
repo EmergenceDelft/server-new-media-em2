@@ -16,14 +16,23 @@ NR OF MOTORS PER MODULE: 10
 "type": "hello",
 "mac_address": "ec:07:9c:99:6c:a9",
 "sensors": [
-"ULTRASOUND"
+"ULTRASOUND",
+"MICROPHONE"
 ]
 }
 
 {
 "type": "sensor_reading",
+"sensor_type": "ULTRASOUND",
 "sensor_id": "ec:07:9c:99:6c:a9::ULTRASOUND",
 "value": 0.111
+}
+
+{
+"type": "sensor_reading",
+"sensor_type": "MICROPHONE",
+"sensor_id": "ec:07:9c:99:6c:a9::MICROPHONE",
+"value": 180
 }
 
 //outputs

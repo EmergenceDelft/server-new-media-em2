@@ -9,13 +9,6 @@ const SensorReading = (sequelize) => {
       primaryKey: true,
       allowNull: false
     },
-    // sensor_id: {
-    //   type: DataTypes.STRING,
-    //   references: {
-    //     model: "sensors",
-    //     key: "id"
-    //   }
-    // },
     value: {
       type: DataTypes.DOUBLE,
       allowNull: false
@@ -23,6 +16,10 @@ const SensorReading = (sequelize) => {
     processed: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    type: {
+      type: DataTypes.ENUM(["ULTRASOUND", "MICROPHONE", "CAPACITIVE"]),
+      allowNull: false
     }
   })
   return SensorReading
