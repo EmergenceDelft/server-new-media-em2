@@ -43,12 +43,12 @@ async function updateMotorsBasedOnProximity(readings, clients) {
   if (isOverThreshold) {
     //far proximity
     let motors1 = await dbUpdateAllTransparencyFilters(macs, 90)
-    let motors2 = await dbUpdateAllColorFilters(macs, true) //boolean which means start moving
+    let motors2 = await dbUpdateAllColorFilters(macs, false) //boolean which means start moving
     return interleave(motors1, motors2)
   } else {
     //near proximity
     let motors1 = await dbUpdateAllTransparencyFilters(macs, 0)
-    let motors2 = await dbUpdateAllColorFilters(macs, false) //bolean which means stop moving
+    let motors2 = await dbUpdateAllColorFilters(macs, true) //bolean which means stop moving
     return interleave(motors1, motors2)
   }
 }
@@ -121,11 +121,19 @@ function interleave(array1, array2) {
   return result
 }
 function motorsToJson(filteredMotors) {
-  const jsonMotorsArray = filteredMotors.map((data_values, index) => ({
-    motor_address: index,
-    angle: data_values.angle,
-    movement: data_values.movement
-  }))
+  const jsonMotorsArray = filteredMotors.map((data_values, index) => {
+    const motorData = { motor_address: index }
+
+    if (data_values.angle !== null) {
+      motorData.angle = data_values.angle
+    }
+
+    if (data_values.movement !== null) {
+      motorData.movement = data_values.movement
+    }
+
+    return motorData
+  })
 
   const jsonMotorFinal = {
     type: "motor_commands",
