@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize"
 import { v4 as uuidv4 } from "uuid"
+import { SENSOR_OPTIONS } from "../constants.js"
 
 const SensorReading = (sequelize) => {
   const SensorReading = sequelize.define("sensor_reading", {
@@ -18,7 +19,7 @@ const SensorReading = (sequelize) => {
       defaultValue: false
     },
     type: {
-      type: DataTypes.ENUM(["ULTRASOUND", "MICROPHONE", "CAPACITIVE"]),
+      type: DataTypes.ENUM(SENSOR_OPTIONS),
       allowNull: false
     }
   })
