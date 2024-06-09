@@ -14,8 +14,6 @@ import { handleMessage } from "./services/messageHandler.js"
 var app = express()
 var ws = expressWs(app)
 
-app.set("view engine", "ejs")
-
 //Sync database
 await sequelize
   .sync({ force: true })
@@ -38,7 +36,6 @@ app.get("/", async (req, res) => {
 })
 
 app.ws("/echo", async function (ws, req) {
-  console.log("hiiiiiiiiii")
   const time = Date.now()
   clients.push({ ws, time })
 
