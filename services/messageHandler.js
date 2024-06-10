@@ -10,8 +10,8 @@ import { createSensorReading } from "../controllers/SensorReadingController.js"
 import { createMotor } from "../controllers/MotorController.js"
 import { createVoxel } from "../controllers/VoxelController.js"
 
-const MOTOR_AMOUNT = 10
-const VOXEL_AMOUNT = 2
+const MOTOR_AMOUNT = 2
+const VOXEL_AMOUNT = 1
 
 export function handleMessage(msg, ws) {
   try {
@@ -54,8 +54,8 @@ function handleHelloMessage(msg, ws) {
             createVoxel(msg.mac_address, i)
               .then(console.log("Voxel created"))
               .then((voxelId) => {
-                createMotor(voxelId, 0, "COLOR", msg.mac_address)
-                createMotor(voxelId, 1, "TRANSPARENCY", msg.mac_address)
+                createMotor(voxelId, 0, "TRANSPARENCY", msg.mac_address)
+                createMotor(voxelId, 1, "COLOR", msg.mac_address)
                 console.log("2 Motors created")
               })
           }

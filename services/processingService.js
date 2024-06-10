@@ -32,23 +32,29 @@ async function updateMotorsInDB(newEntries, clients) {
 
   let motors1 = updateMotorsBasedOnProximity(proximityReadings, clients)
   //let motors2 = updateMotorsBasedOnMicrophone(micReadings, clients)
-  //possible for EXTENSION HERE
-
+  //TODO combine motors 1 and motors 2
   return motors1
 }
 
 async function updateMotorsBasedOnProximity(readings, clients) {
-  const isOverThreshold = readings.some((reading) => reading.value >= 0.1)
+  const isClose = readings.some(
+    (reading) => reading.value <= 15 && reading.value != 0
+  )
+
   let macs = clients.map((client) => client.mac_address)
-  if (isOverThreshold) {
+  if (!isClose) {
     //far proximity
     let motors1 = await dbUpdateAllTransparencyFilters(macs, 90)
-    let motors2 = await dbUpdateAllColorFilters(macs, false) //boolean which means start moving
+    let motors2 = await dbUpdateAllColorFilters(macs, true) //boolean which means start moving
+    console.log("--------------------------")
+    console.log("far proximity")
     return interleave(motors1, motors2)
   } else {
     //near proximity
     let motors1 = await dbUpdateAllTransparencyFilters(macs, 0)
-    let motors2 = await dbUpdateAllColorFilters(macs, true) //bolean which means stop moving
+    let motors2 = await dbUpdateAllColorFilters(macs, false) //bolean which means stop moving
+    console.log("--------------------------")
+    console.log("near proximity")
     return interleave(motors1, motors2)
   }
 }

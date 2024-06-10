@@ -75,7 +75,7 @@ setInterval(async () => {
   }
 }, 10000)
 
-const pollingInterval = 1000
+const pollingInterval = 100
 setInterval(async () => {
   try {
     const clientsWithoutTime = clients.map(({ ws, time }) => ws)
