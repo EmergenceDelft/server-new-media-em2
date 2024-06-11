@@ -21,34 +21,19 @@ db.SensorReading = SensorReading(sequelize, Sequelize)
 db.Motor = Motor(sequelize, Sequelize)
 
 //One Module has many Voxels
-db.Module.hasMany(db.Voxel, {
-  // foreignKey: "module_id"
-})
-db.Voxel.belongsTo(db.Module, {
-  // foreignKey: "module_id"
-})
+db.Module.hasMany(db.Voxel)
+db.Voxel.belongsTo(db.Module)
 
 //One Module has many Sensors
-db.Module.hasMany(db.Sensor, {
-  // foreignKey: "module_id"
-})
-db.Sensor.belongsTo(db.Module, {
-  // foreignKey: "module_id"
-})
+db.Module.hasMany(db.Sensor)
+db.Sensor.belongsTo(db.Module)
 
 //one Module has many motors
-db.Voxel.hasMany(db.Motor, {
-  // foreignKey: "voxel_id"
-})
-db.Motor.belongsTo(db.Voxel, {
-  // foreignKey: "voxel_id"
-})
+db.Voxel.hasMany(db.Motor)
+db.Motor.belongsTo(db.Voxel)
+
 //One Sensor has many SensorReadings
-db.Sensor.hasMany(db.SensorReading, {
-  // foreignKey: "id"
-})
-db.SensorReading.belongsTo(db.Sensor, {
-  // foreignKey: "id"
-})
+db.Sensor.hasMany(db.SensorReading)
+db.SensorReading.belongsTo(db.Sensor)
 
 export default db

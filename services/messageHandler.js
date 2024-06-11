@@ -1,7 +1,4 @@
-import {
-  createModule,
-  getModuleByMacAddress
-} from "../controllers/ModuleController.js"
+import { createModule, readModule } from "../controllers/ModuleController.js"
 
 import { createSensor } from "../controllers/SensorController.js"
 
@@ -36,7 +33,7 @@ export function handleMessage(msg, ws) {
 function handleHelloMessage(msg, ws) {
   //Check if the mac address already exists in DB, if not, create a new module
   ws.mac_address = msg.mac_address
-  getModuleByMacAddress(msg.mac_address).then((existingModel) => {
+  readModule(msg.mac_address).then((existingModel) => {
     if (!existingModel) {
       createModule(msg.mac_address)
         .then(console.log("Module created"))
