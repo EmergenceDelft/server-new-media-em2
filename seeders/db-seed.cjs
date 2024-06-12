@@ -185,7 +185,7 @@ module.exports = {
     await queryInterface.bulkInsert("sensor_readings", sensorReadings)
   },
 
-  down: async (queryInterface, Sequelize) => {
+  down: async (queryInterface) => {
     // Remove all entries
     await queryInterface.bulkDelete("sensor_readings", null, {})
     await queryInterface.bulkDelete("motors", null, {})

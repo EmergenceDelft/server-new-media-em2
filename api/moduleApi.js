@@ -48,12 +48,10 @@ moduleApi.get("/api/modules", async (req, res) => {
 })
 
 /* Update */
-moduleApi.post("/api/modules/:mac_address/edit", async (req, res) => {
+moduleApi.put("/api/modules/:mac_address", async (req, res) => {
   try {
     const { mac_address } = req.params
-    // const { orientation, position_x, position_y } = req.body
-    console.log(req.body)
-    return res.status(400).send(req)
+    const { orientation, position_x, position_y } = req.body
 
     if (
       position_x === undefined ||

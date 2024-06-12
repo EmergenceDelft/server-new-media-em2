@@ -4,6 +4,8 @@ import sequelize from "./services/db.js"
 import watchDatabase from "./services/watchDatabase.js"
 import fetchDbRoutes from "./api/fetchDbRoutes.js"
 import moduleApi from "./api/moduleApi.js"
+import cors from "cors"
+import bodyParser from "body-parser"
 
 import db from "./models/index.js" // Assuming this imports your Sequelize models
 
@@ -15,7 +17,7 @@ var ws = expressWs(app)
 
 //Sync database
 await sequelize
-  .sync({ force: true })
+  .sync()
   .then(() => {})
   .catch((err) => {
     console.log(err)
@@ -23,9 +25,17 @@ await sequelize
 
 export var clients = []
 
+app.use(
+  cors({
+    origin: "http://localhost:3000",
+    methods: ["GET", "POST", "PUT", "DELETE"]
+  })
+)
+
+app.use(bodyParser.json())
+
 app.use(function (req, res, next) {
   req.testing = "testing"
-  res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000")
   return next()
 })
 

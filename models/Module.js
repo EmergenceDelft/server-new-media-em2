@@ -16,11 +16,11 @@ const Module = (sequelize) => {
       default: 0
     },
     position_x: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
       default: 0
     },
     position_y: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.FLOAT,
       default: 0
     }
   })
