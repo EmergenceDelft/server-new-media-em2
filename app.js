@@ -23,6 +23,8 @@ await sequelize
     console.log(err)
   })
 
+await db.SensorReading.truncate()
+
 export var clients = []
 
 app.use(
@@ -74,15 +76,17 @@ setInterval(async () => {
   }
 }, 10000)
 
-const pollingInterval = 1000
+const pollingInterval = 100
 setInterval(async () => {
   try {
     const clientsWithoutTime = clients.map(({ ws, time }) => ws)
+    console.log("this is my original list of clients")
     watchDatabase(clientsWithoutTime, pollingInterval)
   } catch (err) {
     console.error("Error watching database", err)
   }
 }, pollingInterval)
+
 //this runs watching the database every second, and
 //then watchDatabase(clients) doesn't have a while true loop anymore
 //this is done this way in order to make sure that the clients object is passed to watchDatabase as often as possible

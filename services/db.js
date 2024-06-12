@@ -25,7 +25,7 @@ const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
 })
 
 sequelize
-  .authenticate({ force: true })
+  .authenticate()
   .then(() => {
     console.log("[Server] Connection to database established successfully.")
   })
