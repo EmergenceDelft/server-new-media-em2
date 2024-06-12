@@ -21,17 +21,23 @@ module.exports = {
       {
         id: generateRandomMac(),
         orientation: 1,
+        position_x: 0.5,
+        position_y: 0.2,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
         id: generateRandomMac(),
+        position_x: 0.2,
+        position_y: 0.5,
         orientation: 1,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
         id: generateRandomMac(),
+        position_x: 0.7,
+        position_y: 0.1,
         orientation: 2,
         createdAt: new Date(),
         updatedAt: new Date()

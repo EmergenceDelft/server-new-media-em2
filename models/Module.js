@@ -14,6 +14,14 @@ const Module = (sequelize) => {
     orientation: {
       type: DataTypes.INTEGER,
       default: 0
+    },
+    position_x: {
+      type: DataTypes.INTEGER,
+      default: 0
+    },
+    position_y: {
+      type: DataTypes.INTEGER,
+      default: 0
     }
   })
   return Module

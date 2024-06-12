@@ -6,13 +6,6 @@ const config = {
     host: process.env.DB_HOST || "localhost",
     dialect: "postgres"
   },
-  test: {
-    username: process.env.DB_USER || "nmpr",
-    password: process.env.DB_PASSWORD || "admin",
-    database: process.env.DB_NAME_TEST || "new_media_test",
-    host: process.env.DB_HOST || "localhost",
-    dialect: "postgres"
-  },
   production: {
     username: process.env.DB_USER,
     password: process.env.DB_PASSWORD,

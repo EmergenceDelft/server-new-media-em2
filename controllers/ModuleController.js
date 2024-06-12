@@ -44,10 +44,20 @@ export async function readModules() {
 }
 
 /* Update */
-export async function updateModule(mac_address, orientation) {
+export async function updateModule(
+  mac_address,
+  connection,
+  orientation,
+  position_x,
+  position_y
+) {
   try {
     const module = await readModule(mac_address)
+    module.connection_alive = connection
     module.orientation = orientation
+    module.position_x = position_x
+    module.position_y = position_y
+
     await module.save()
   } catch (error) {
     console.error("Error updating module:", error)

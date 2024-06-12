@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon app.js"
+    "start": "nodemon app.js",
+    "seed:db": "npx sequelize-cli db:seed:all"
   },
   "type": "module",
   "dependencies": {

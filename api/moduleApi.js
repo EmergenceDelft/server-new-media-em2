@@ -51,11 +51,23 @@ moduleApi.get("/api/modules", async (req, res) => {
 moduleApi.post("/api/modules/:mac_address/edit", async (req, res) => {
   try {
     const { mac_address } = req.params
-    const { orientation } = req.body
-    await updateModule(mac_address, orientation)
+    // const { orientation, position_x, position_y } = req.body
+    console.log(req.body)
+    return res.status(400).send(req)
+
+    if (
+      position_x === undefined ||
+      position_y === undefined ||
+      orientation === undefined
+    ) {
+      return res.status(400).send({ error: "Missing field in post message." })
+    }
+
+    await updateModule(mac_address, true, orientation, position_x, position_y)
     res.send({ message: "Module updated" })
   } catch (error) {
-    res.status(500).send({ error: "Failed to update module" })
+    res.status(500).send({ error: "Failed to update module" + error })
   }
 })
+
 export default moduleApi
