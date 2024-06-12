@@ -7,15 +7,30 @@ const macAddressLength = 17
 export async function processDatabaseEntries(newEntries, clients) {
   const updatedMotors = await updateMotorsInDB(newEntries, clients)
 
+  let macs = clients.map((client) => client.mac_address)
+  let newMacs = await getAllEntangled(macs)
+
+  console.log("we would like to send to these macs")
+  console.log(newMacs)
+
   if (updatedMotors) {
-    for (let i = 0; i < clients.length; i++) {
-      const mac_websocket = clients[i].mac_address
+    console.log("hello")
+    const clientsToSend = clients.filter((client) =>
+      newMacs.includes(client.mac_address)
+    )
+
+    // Iterate over filtered clients and send data
+    clientsToSend.forEach((client) => {
+      const mac_websocket = client.mac_address
       const filteredMotorsDegrees = updatedMotors
-        .filter((x) => x.dataValues.mac == mac_websocket)
+        .filter((x) => x.dataValues.mac === mac_websocket)
         .map((x) => x.dataValues)
 
-      clients[i].send(motorsToJson(filteredMotorsDegrees))
-    }
+      client.send(motorsToJson(filteredMotorsDegrees))
+      console.log("----------")
+      console.log("sending to")
+      console.log(client.mac_address)
+    })
   }
 }
 
@@ -32,27 +47,39 @@ async function updateMotorsInDB(newEntries, clients) {
 
   let motors1 = updateMotorsBasedOnProximity(proximityReadings, clients)
   //let motors2 = updateMotorsBasedOnMicrophone(micReadings, clients)
-  //TODO combine motors 1 and motors 2
+
+  //this could be done in the future, server side processing of microphone
+  //for now it was easier and quicker to do it just client side
+  //but there are more interesting ways to process audios from many sources
+
+  //TODO also combine motors 1 and motors 2, this is a bit hard, be careful with ordering of the arrays
   return motors1
 }
 
+// async function updateMotorsBasedOnMicrophone(readings, clients) {}
+
 async function updateMotorsBasedOnProximity(readings, clients) {
+  //clients of type websoscket client
   const isClose = readings.some(
-    (reading) => reading.value <= 15 && reading.value != 0
+    (reading) => reading.value <= 50 && reading.value != 0
   )
 
+  //here macs from all entangled
   let macs = clients.map((client) => client.mac_address)
+  let newMacs = await getAllEntangled(macs)
+  console.log("--------------------------------")
+  console.log(newMacs)
   if (!isClose) {
     //far proximity
-    let motors1 = await dbUpdateAllTransparencyFilters(macs, 90)
-    let motors2 = await dbUpdateAllColorFilters(macs, true) //boolean which means start moving
+    let motors1 = await dbUpdateAllTransparencyFilters(newMacs, 90)
+    let motors2 = await dbUpdateAllColorFilters(newMacs, true) //boolean which means start moving
     console.log("--------------------------")
     console.log("far proximity")
     return interleave(motors1, motors2)
   } else {
     //near proximity
-    let motors1 = await dbUpdateAllTransparencyFilters(macs, 0)
-    let motors2 = await dbUpdateAllColorFilters(macs, false) //bolean which means stop moving
+    let motors1 = await dbUpdateAllTransparencyFilters(newMacs, 0)
+    let motors2 = await dbUpdateAllColorFilters(newMacs, false) //bolean which means stop moving
     console.log("--------------------------")
     console.log("near proximity")
     return interleave(motors1, motors2)
@@ -147,4 +174,34 @@ function motorsToJson(filteredMotors) {
   }
 
   return JSON.stringify(jsonMotorFinal)
+}
+
+async function getAllEntangled(macs) {
+  try {
+    const modules = await db.Module.findAll({
+      where: {
+        id: {
+          [Op.in]: macs
+        }
+      },
+      include: [
+        {
+          model: db.Module,
+          as: "entangledModule",
+          attributes: ["id"]
+        }
+      ]
+    })
+
+    // Collect the associated entangled module IDs
+    const associatedModuleIds = new Set()
+    modules.forEach((module) => {
+      module.entangledModule.forEach((em) => associatedModuleIds.add(em.id))
+    })
+
+    return Array.from(associatedModuleIds)
+  } catch (error) {
+    console.error("Error in getAllEntangled:", error)
+    throw error
+  }
 }
