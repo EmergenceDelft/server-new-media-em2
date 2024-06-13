@@ -38,13 +38,13 @@ async function updateMotorsInDB(newEntries, clients) {
 
 async function updateMotorsBasedOnProximity(readings, clients) {
   const isClose = readings.some(
-    (reading) => reading.value <= 15 && reading.value != 0
+    (reading) => reading.value <= 150 && reading.value != 0
   )
 
   let macs = clients.map((client) => client.mac_address)
   if (!isClose) {
     //far proximity
-    let motors1 = await dbUpdateAllTransparencyFilters(macs, 90)
+    let motors1 = await dbUpdateAllTransparencyFilters(macs, 80)
     let motors2 = await dbUpdateAllColorFilters(macs, true) //boolean which means start moving
     console.log("--------------------------")
     console.log("far proximity")
