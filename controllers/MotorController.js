@@ -15,3 +15,26 @@ export async function createMotor(voxel_id, cnt, ty, mac) {
     console.log(error)
   }
 }
+
+export async function updateMotor(id, value) {
+  try {
+    // Update the angle for all motors with the specified id
+    const [updatedCount] = await Motor.update(
+      { angle: value },
+      {
+        where: {
+          id: id
+        }
+      }
+    )
+
+    // Check if any rows were updated
+    if (updatedCount > 0) {
+      console.log(`Successfully updated ${updatedCount} motor(s) with id ${id}`)
+    } else {
+      console.log(`No motors found with id ${id}`)
+    }
+  } catch (error) {
+    console.error("Error updating motors:", error)
+  }
+}
