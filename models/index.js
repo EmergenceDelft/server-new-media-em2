@@ -13,29 +13,29 @@ import Voxel from "./Voxel.js"
 import Sensor from "./Sensor.js"
 import SensorReading from "./SensorReading.js"
 import Motor from "./Motor.js"
+import Entanglement from "./Entanglement.js"
 
 db.Module = Module(sequelize, Sequelize)
 db.Voxel = Voxel(sequelize, Sequelize)
 db.Sensor = Sensor(sequelize, Sequelize)
 db.SensorReading = SensorReading(sequelize, Sequelize)
 db.Motor = Motor(sequelize, Sequelize)
+db.Entanglement = Entanglement(sequelize, Sequelize)
 
 //many modules are entangled to many modules
-
 db.Module.belongsToMany(db.Module, {
   as: "originalModule",
   foreignKey: "moduleId",
   otherKey: "entangledModuleId",
-  through: "entangled"
+  through: Entanglement
 })
+
 db.Module.belongsToMany(db.Module, {
   as: "entangledModule",
   foreignKey: "entangledModuleId",
   otherKey: "moduleId",
-  through: "entangled"
+  through: Entanglement
 })
-
-//db.Module.belongsToMany(db.Module)
 
 //One Module has many Voxels
 db.Module.hasMany(db.Voxel)

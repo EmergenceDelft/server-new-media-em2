@@ -17,7 +17,7 @@ var ws = expressWs(app)
 
 //Sync database
 await sequelize
-  .sync()
+  .sync({ force: true })
   .then(() => {})
   .catch((err) => {
     console.log(err)
