@@ -22,11 +22,7 @@ export async function createModule(mac_address) {
 /* Read */
 export async function readModule(mac_address) {
   try {
-    return await Module.findOne({
-      where: {
-        id: mac_address
-      }
-    })
+    return await Module.findByPk(mac_address)
   } catch (error) {
     console.error("Error fetching module:", error)
     throw error
@@ -35,8 +31,7 @@ export async function readModule(mac_address) {
 
 export async function readModules() {
   try {
-    const modules = await Module.findAll()
-    return modules
+    return await Module.findAll()
   } catch (error) {
     console.error("Error fetching modules:", error)
     throw error

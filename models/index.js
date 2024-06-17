@@ -27,14 +27,14 @@ db.Module.belongsToMany(db.Module, {
   as: "originalModule",
   foreignKey: "moduleId",
   otherKey: "entangledModuleId",
-  through: Entanglement
+  through: db.Entanglement
 })
 
 db.Module.belongsToMany(db.Module, {
   as: "entangledModule",
   foreignKey: "entangledModuleId",
   otherKey: "moduleId",
-  through: Entanglement
+  through: db.Entanglement
 })
 
 //One Module has many Voxels

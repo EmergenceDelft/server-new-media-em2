@@ -35,3 +35,27 @@ export async function createEntanglement(mac_addresses) {
     throw error
   }
 }
+
+/* Read */
+export async function readEntanglements() {
+  try {
+    const entanglements = await Entanglement.findAll()
+    return entanglements
+  } catch (error) {
+    console.error("Error reading entanglements: ", error)
+    throw error
+  }
+}
+
+/* Delete */
+export async function deleteEntanglement(id) {
+  try {
+    const entanglement = await Entanglement.findByPk(id)
+    if (entanglement) {
+      await entanglement.destroy()
+    }
+  } catch (error) {
+    console.error("Error deleting entanglement: ", error)
+    throw error
+  }
+}
