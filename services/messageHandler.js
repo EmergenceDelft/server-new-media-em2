@@ -74,18 +74,13 @@ function handleHelloMessage(msg, ws) {
 }
 
 function handleSensorReadingMessage(msg) {
-  createSensorReading(msg.sensor_id, msg.value, msg.sensor_type)
-    .then(console.log("Sensor reading created"))
-    .catch((err) =>
-      console.error("Could not create a sensor reading in the database", err)
-    )
+  createSensorReading(msg.sensor_id, msg.value, msg.sensor_type).catch((err) =>
+    console.error("Could not create a sensor reading in the database", err)
+  )
 }
 
 function handleMotorAngleMessage(msg) {
-  console.log("hello")
-  updateMotor(msg.id, msg.value)
-    .then(console.log("Sensor reading created"))
-    .catch((err) =>
-      console.error("Could not create a sensor reading in the database", err)
-    )
+  updateMotor(msg.id, msg.value).catch((err) =>
+    console.error("Could not create a sensor reading in the database", err)
+  )
 }
