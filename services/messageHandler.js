@@ -54,8 +54,14 @@ function handleHelloMessage(msg, ws) {
             createVoxel(msg.mac_address, i)
               .then(console.log("Voxel created"))
               .then((voxelId) => {
-                createMotor(voxelId, 0, "TRANSPARENCY", msg.mac_address)
-                createMotor(voxelId, 1, "COLOR", msg.mac_address)
+                createMotor(
+                  voxelId,
+                  0,
+                  "TRANSPARENCY",
+                  "MANUAL",
+                  msg.mac_address
+                )
+                createMotor(voxelId, 1, "COLOR", "AUTO", msg.mac_address)
                 console.log("2 Motors created")
               })
           }

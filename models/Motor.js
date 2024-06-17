@@ -1,5 +1,5 @@
 import { DataTypes } from "sequelize"
-import { MOTOR_OPTIONS } from "../constants.js"
+import { MOTOR_OPTIONS, MOVEMENT_OPTIONS } from "../constants.js"
 
 const Motor = (sequelize) => {
   const Motor = sequelize.define("motor", {
@@ -11,7 +11,7 @@ const Motor = (sequelize) => {
     angle: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      defaultValue: () => null,
+      defaultValue: () => 0,
       validate: {
         min: 0,
         max: 180
@@ -27,7 +27,8 @@ const Motor = (sequelize) => {
       allowNull: false
     },
     movement: {
-      type: DataTypes.BOOLEAN
+      type: DataTypes.ENUM(MOVEMENT_OPTIONS),
+      allowNull: false
     }
   })
   return Motor

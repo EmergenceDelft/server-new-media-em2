@@ -7,6 +7,8 @@ const macAddressLength = 17
 export async function processDatabaseEntries(newEntries, clients) {
   const updatedMotors = await updateMotorsInDB(newEntries, clients)
 
+  //TODO reformat this so it sends motor commands to all clients
+  //instead of using updatedMotors do a query to get all motors ??
   if (updatedMotors) {
     for (let i = 0; i < clients.length; i++) {
       const mac_websocket = clients[i].mac_address
@@ -31,9 +33,29 @@ async function updateMotorsInDB(newEntries, clients) {
   //dataTypes ENUM here please, TODO
 
   let motors1 = updateMotorsBasedOnProximity(proximityReadings, clients)
-  //let motors2 = updateMotorsBasedOnMicrophone(micReadings, clients)
+  let motors2 = updateMotorsBasedOnMicrophone(micReadings, clients)
   //TODO combine motors 1 and motors 2
   return motors1
+}
+
+async function updateMotorsBasedOnMicrophone(readings, clients) {
+  const isNoisy = readings.some((reading) => reading.value >= 2000)
+  let macs = clients.map((client) => client.mac_address)
+  if (isNoisy) {
+    //noisy
+    //set all auto and auto jittery to auto jittery
+    //or set all color motors to auto jittery
+    let motors2 = await dbUpdateAllAutoColorFilters(macs, "AUTOJITTER") //move continously with jitter
+    console.log("--------------------------")
+    console.log("noisy")
+    return motors2
+  } else {
+    //quiet
+    let motors2 = await dbUpdateAllAutoColorFilters(macs, "AUTO") //move continously without jitter
+    console.log("--------------------------")
+    console.log("quiet")
+    return motors2
+  }
 }
 
 async function updateMotorsBasedOnProximity(readings, clients) {
@@ -45,14 +67,23 @@ async function updateMotorsBasedOnProximity(readings, clients) {
   if (!isClose) {
     //far proximity
     let motors1 = await dbUpdateAllTransparencyFilters(macs, 80)
-    let motors2 = await dbUpdateAllColorFilters(macs, true) //boolean which means start moving
+    let motors2 = await dbUpdateAllColorFilters(macs, "AUTO") //boolean which means start moving
     console.log("--------------------------")
     console.log("far proximity")
     return interleave(motors1, motors2)
   } else {
     //near proximity
     let motors1 = await dbUpdateAllTransparencyFilters(macs, 0)
-    let motors2 = await dbUpdateAllColorFilters(macs, false) //bolean which means stop moving
+    let motors2 = await dbUpdateAllColorFilters(macs, "MANUAL")
+    //this is where we need to make new function
+    //to get all entangled motors
+
+    //TODO
+    //for each firstMac in macs
+    //get entangledMacs
+    //set firstMac angle to firstMac current angle (from database)
+    //set entangledMacs angles to firstMac's current angle
+
     console.log("--------------------------")
     console.log("near proximity")
     return interleave(motors1, motors2)
@@ -63,7 +94,10 @@ async function dbUpdateAllTransparencyFilters(macs, angle) {
   const transaction = await sequelize.transaction()
   try {
     const [numberOfAffectedRows, affectedRows] = await db.Motor.update(
-      { angle: angle }, // Set angle to angle
+      {
+        angle: angle, // Set angle to angle
+        movement: "MANUAL" // Set movement to "MANUAL"
+      },
       {
         where: {
           [Op.and]: [
@@ -95,6 +129,34 @@ async function dbUpdateAllColorFilters(macs, moving) {
           [Op.and]: [
             { type: "COLOR" }, // Constrain the type to PROXIMITY
             { mac: { [Op.in]: macs } } // Check if mac is present in the macs array
+          ]
+        },
+        returning: true,
+        transaction
+      } // sequelize interprets this as module_mac_address matches at least one value in macs
+    )
+    await transaction.commit()
+    console.log("All motors updated succesfully")
+    return affectedRows
+  } catch (error) {
+    await transaction.rollback()
+    console.error("Error updating Motors object:", error)
+    return null
+  }
+}
+
+async function dbUpdateAllAutoColorFilters(macs, movement) {
+  const transaction = await sequelize.transaction()
+  try {
+    const [numberOfAffectedRows, affectedRows] = await db.Motor.update(
+      { movement: movement }, // Set the movement to the moving variable, true if far_proximity, false if close_proximit
+      {
+        where: {
+          [Op.and]: [
+            { type: "COLOR" }, // Constrain the type to PROXIMITY
+            { mac: { [Op.in]: macs } }, // Check if mac is present in the macs array
+            { movement: { [Op.in]: ["AUTO", "AUTOJITTER"] } } //check if motor was set to auto or autojittery
+            //maybe this is not needed idk
           ]
         },
         returning: true,
