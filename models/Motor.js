@@ -11,7 +11,7 @@ const Motor = (sequelize) => {
     angle: {
       type: DataTypes.INTEGER,
       allowNull: true,
-      defaultValue: () => 0,
+      defaultValue: () => 45,
       validate: {
         min: 0,
         max: 180

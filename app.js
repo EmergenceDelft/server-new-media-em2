@@ -50,9 +50,7 @@ app.ws("/echo", async function (ws, req) {
   console.log("updated?")
   ws.on("message", async function (msg) {
     try {
-      console.log("handling")
       handleMessage(msg, ws)
-      console.log("done handling")
       //await updateModule(mac, true)
     } catch (error) {
       console.error("Error parsing or processing message:", error)

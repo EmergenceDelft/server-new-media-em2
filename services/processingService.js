@@ -39,7 +39,7 @@ async function updateMotorsInDB(newEntries, clients) {
 }
 
 async function updateMotorsBasedOnMicrophone(readings, clients) {
-  const isNoisy = readings.some((reading) => reading.value >= 2000)
+  const isNoisy = readings.some((reading) => reading.value >= 500)
   let macs = clients.map((client) => client.mac_address)
   if (isNoisy) {
     //noisy
