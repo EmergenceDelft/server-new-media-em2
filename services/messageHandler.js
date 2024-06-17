@@ -7,7 +7,7 @@ import { createSensor } from "../controllers/SensorController.js"
 
 import { createSensorReading } from "../controllers/SensorReadingController.js"
 
-import { createMotor } from "../controllers/MotorController.js"
+import { createMotor, updateMotor } from "../controllers/MotorController.js"
 import { createVoxel } from "../controllers/VoxelController.js"
 
 const MOTOR_AMOUNT = 2
@@ -29,6 +29,9 @@ export function handleMessage(msg, ws) {
 
     case "sensor_reading":
       handleSensorReadingMessage(jsonMsg)
+      break
+    case "motor_angle":
+      handleMotorAngleMessage(jsonMsg)
       break
   }
 }
@@ -54,8 +57,14 @@ function handleHelloMessage(msg, ws) {
             createVoxel(msg.mac_address, i)
               .then(console.log("Voxel created"))
               .then((voxelId) => {
-                createMotor(voxelId, 0, "TRANSPARENCY", msg.mac_address)
-                createMotor(voxelId, 1, "COLOR", msg.mac_address)
+                createMotor(
+                  voxelId,
+                  0,
+                  "TRANSPARENCY",
+                  "MANUAL",
+                  msg.mac_address
+                )
+                createMotor(voxelId, 1, "COLOR", "AUTO", msg.mac_address)
                 console.log("2 Motors created")
               })
           }
@@ -65,11 +74,13 @@ function handleHelloMessage(msg, ws) {
 }
 
 function handleSensorReadingMessage(msg) {
-  console.log("value received")
-  console.log(msg.value)
-  createSensorReading(msg.sensor_id, msg.value, msg.sensor_type)
-    .then(console.log("Sensor reading created"))
-    .catch((err) =>
-      console.error("Could not create a sensor reading in the database", err)
-    )
+  createSensorReading(msg.sensor_id, msg.value, msg.sensor_type).catch((err) =>
+    console.error("Could not create a sensor reading in the database", err)
+  )
+}
+
+function handleMotorAngleMessage(msg) {
+  updateMotor(msg.id, msg.value).catch((err) =>
+    console.error("Could not create a sensor reading in the database", err)
+  )
 }
