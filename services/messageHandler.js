@@ -7,11 +7,11 @@ import { createSensor } from "../controllers/SensorController.js"
 
 import { createSensorReading } from "../controllers/SensorReadingController.js"
 
-import { createMotor } from "../controllers/MotorController.js"
+import { createMotor, updateMotor } from "../controllers/MotorController.js"
 import { createVoxel } from "../controllers/VoxelController.js"
 
-const MOTOR_AMOUNT = 10
-const VOXEL_AMOUNT = 2
+const MOTOR_AMOUNT = 2
+const VOXEL_AMOUNT = 1
 
 export function handleMessage(msg, ws) {
   try {
@@ -30,6 +30,9 @@ export function handleMessage(msg, ws) {
     case "sensor_reading":
       handleSensorReadingMessage(jsonMsg)
       break
+    case "motor_angle":
+      handleMotorAngleMessage(jsonMsg)
+      break
   }
 }
 
@@ -40,37 +43,44 @@ function handleHelloMessage(msg, ws) {
     if (!existingModel) {
       createModule(msg.mac_address)
         .then(console.log("Module created"))
-        .catch((err) =>
-          console.error("Could not create a module in the database", err)
-        )
-
-      msg.sensors.forEach((sensor_type) => {
-        createSensor(sensor_type, msg.mac_address)
-          .then(console.log(sensor_type + "Sensor created"))
-          .catch((err) =>
-            console.error("Could not create a sensor in the database", err)
-          )
-      })
-
-      for (let i = 0; i < VOXEL_AMOUNT; i++) {
-        createVoxel(msg.mac_address, i)
-          .then(console.log("Voxel created"))
-          .then((voxelId) => {
-            createMotor(voxelId, 0)
-            createMotor(voxelId, 1)
-            console.log("2 Motors created")
+        .then(() =>
+          msg.sensors.forEach((sensor_type) => {
+            createSensor(sensor_type, msg.mac_address)
+              .then(console.log(sensor_type + "Sensor created"))
+              .catch((err) =>
+                console.error("Could not create a sensor in the database", err)
+              )
           })
-      }
+        )
+        .then(() => {
+          for (let i = 0; i < VOXEL_AMOUNT; i++) {
+            createVoxel(msg.mac_address, i)
+              .then(console.log("Voxel created"))
+              .then((voxelId) => {
+                createMotor(
+                  voxelId,
+                  0,
+                  "TRANSPARENCY",
+                  "MANUAL",
+                  msg.mac_address
+                )
+                createMotor(voxelId, 1, "COLOR", "AUTO", msg.mac_address)
+                console.log("2 Motors created")
+              })
+          }
+        })
     }
   })
 }
 
 function handleSensorReadingMessage(msg) {
-  console.log("value received")
-  console.log(msg.value)
-  createSensorReading(msg.sensor_id, msg.value)
-    .then(console.log("Sensor reading created"))
-    .catch((err) =>
-      console.error("Could not create a sensor reading in the database", err)
-    )
+  createSensorReading(msg.sensor_id, msg.value, msg.sensor_type).catch((err) =>
+    console.error("Could not create a sensor reading in the database", err)
+  )
+}
+
+function handleMotorAngleMessage(msg) {
+  updateMotor(msg.id, msg.value).catch((err) =>
+    console.error("Could not create a sensor reading in the database", err)
+  )
 }

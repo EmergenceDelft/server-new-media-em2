@@ -1,4 +1,5 @@
 import { DataTypes } from "sequelize"
+import { SENSOR_OPTIONS } from "../constants.js"
 
 const Sensor = (sequelize) => {
   const Sensor = sequelize.define("sensor", {
@@ -7,15 +8,8 @@ const Sensor = (sequelize) => {
       primaryKey: true,
       allowNull: false
     },
-    // module_id: {
-    //   type: DataTypes.STRING,
-    //   references: {
-    //     model: "modules",
-    //     key: "mac_address"
-    //   }
-    // },
     type: {
-      type: DataTypes.ENUM(["ULTRASOUND", "LOUDNESS", "CAPACITIVE"]),
+      type: DataTypes.ENUM(SENSOR_OPTIONS),
       allowNull: false
     }
   })

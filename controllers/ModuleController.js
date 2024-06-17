@@ -21,7 +21,7 @@ export async function createModule(mac_address) {
     Module.create({
       id: mac_address,
       connection_alive: true
-    }).then(console.log("Module created with mac address" + mac_address))
+    }).then(console.log("Module created with mac address " + mac_address))
   } catch (error) {
     console.log(error)
   }

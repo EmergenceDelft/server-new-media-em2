@@ -1,5 +1,6 @@
 import { DataTypes } from "sequelize"
 import { v4 as uuidv4 } from "uuid"
+import { SENSOR_OPTIONS } from "../constants.js"
 
 const SensorReading = (sequelize) => {
   const SensorReading = sequelize.define("sensor_reading", {
@@ -9,13 +10,6 @@ const SensorReading = (sequelize) => {
       primaryKey: true,
       allowNull: false
     },
-    // sensor_id: {
-    //   type: DataTypes.STRING,
-    //   references: {
-    //     model: "sensors",
-    //     key: "id"
-    //   }
-    // },
     value: {
       type: DataTypes.DOUBLE,
       allowNull: false
@@ -23,6 +17,10 @@ const SensorReading = (sequelize) => {
     processed: {
       type: DataTypes.BOOLEAN,
       defaultValue: false
+    },
+    type: {
+      type: DataTypes.ENUM(SENSOR_OPTIONS),
+      allowNull: false
     }
   })
   return SensorReading

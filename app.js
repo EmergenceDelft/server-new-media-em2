@@ -18,11 +18,14 @@ app.set("view engine", "ejs")
 
 //Sync database
 await sequelize
-  .sync({ force: true })
+  //.sync({ force: true })
+  .sync()
   .then(() => {})
   .catch((err) => {
     console.log(err)
   })
+
+await db.SensorReading.truncate()
 
 export var clients = []
 
@@ -38,21 +41,13 @@ app.get("/", async (req, res) => {
 })
 
 app.ws("/echo", async function (ws, req) {
-  console.log("hiiiiiiiiii")
   const time = Date.now()
   clients.push({ ws, time })
-
-  //const mac = req.query.mac_address
-
-  //createModuleMacAddress(mac)
-  //await updateModule(mac, true)
 
   console.log("updated?")
   ws.on("message", async function (msg) {
     try {
-      console.log("handling")
       handleMessage(msg, ws)
-      console.log("done handling")
       //await updateModule(mac, true)
     } catch (error) {
       console.error("Error parsing or processing message:", error)
@@ -75,15 +70,17 @@ setInterval(async () => {
   }
 }, 10000)
 
-const pollingInterval = 100
+const pollingInterval = 500
 setInterval(async () => {
   try {
     const clientsWithoutTime = clients.map(({ ws, time }) => ws)
+    console.log("this is my original list of clients")
     watchDatabase(clientsWithoutTime, pollingInterval)
   } catch (err) {
     console.error("Error watching database", err)
   }
 }, pollingInterval)
+
 //this runs watching the database every second, and
 //then watchDatabase(clients) doesn't have a while true loop anymore
 //this is done this way in order to make sure that the clients object is passed to watchDatabase as often as possible

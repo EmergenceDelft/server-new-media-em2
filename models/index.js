@@ -20,6 +20,23 @@ db.Sensor = Sensor(sequelize, Sequelize)
 db.SensorReading = SensorReading(sequelize, Sequelize)
 db.Motor = Motor(sequelize, Sequelize)
 
+//many modules are entangled to many modules
+
+db.Module.belongsToMany(db.Module, {
+  as: "originalModule",
+  foreignKey: "moduleId",
+  otherKey: "entangledModuleId",
+  through: "entangled"
+})
+db.Module.belongsToMany(db.Module, {
+  as: "entangledModule",
+  foreignKey: "entangledModuleId",
+  otherKey: "moduleId",
+  through: "entangled"
+})
+
+//db.Module.belongsToMany(db.Module)
+
 //One Module has many Voxels
 db.Module.hasMany(db.Voxel, {
   // foreignKey: "module_id"
