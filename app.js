@@ -18,8 +18,8 @@ app.set("view engine", "ejs")
 
 //Sync database
 await sequelize
-  //.sync({ force: true })
-  .sync()
+  .sync({ force: true })
+  // .sync()
   .then(() => {})
   .catch((err) => {
     console.log(err)
