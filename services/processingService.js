@@ -7,17 +7,32 @@ const macAddressLength = 17
 export async function processDatabaseEntries(newEntries, clients) {
   const updatedMotors = await updateMotorsInDB(newEntries, clients)
 
-  //TODO reformat this so it sends motor commands to all clients
-  //instead of using updatedMotors do a query to get all motors ??
+  let macs = clients.map((client) => client.mac_address)
+  let newMacs = await getAllEntangled(macs)
+
+  console.log("we would like to send to these macs")
+  console.log(newMacs)
+
+  newMacs = macs
+
   if (updatedMotors) {
-    for (let i = 0; i < clients.length; i++) {
-      const mac_websocket = clients[i].mac_address
+    console.log("hello")
+    const clientsToSend = clients.filter((client) =>
+      newMacs.includes(client.mac_address)
+    )
+
+    // Iterate over filtered clients and send data
+    clientsToSend.forEach((client) => {
+      const mac_websocket = client.mac_address
       const filteredMotorsDegrees = updatedMotors
-        .filter((x) => x.dataValues.mac == mac_websocket)
+        .filter((x) => x.dataValues.mac === mac_websocket)
         .map((x) => x.dataValues)
 
-      clients[i].send(motorsToJson(filteredMotorsDegrees))
-    }
+      client.send(motorsToJson(filteredMotorsDegrees))
+      console.log("----------")
+      console.log("sending to")
+      console.log(client.mac_address)
+    })
   }
 }
 
@@ -59,11 +74,16 @@ async function updateMotorsBasedOnMicrophone(readings, clients) {
 }
 
 async function updateMotorsBasedOnProximity(readings, clients) {
+  //clients of type websoscket client
   const isClose = readings.some(
     (reading) => reading.value <= 150 && reading.value != 0
   )
 
+  //here macs from all entangled
   let macs = clients.map((client) => client.mac_address)
+  let newMacs = await getAllEntangled(macs)
+  console.log("--------------------------------")
+  console.log(newMacs)
   if (!isClose) {
     //far proximity
     let motors1 = await dbUpdateAllTransparencyFilters(macs, 80)
@@ -209,4 +229,34 @@ function motorsToJson(filteredMotors) {
   }
 
   return JSON.stringify(jsonMotorFinal)
+}
+
+async function getAllEntangled(macs) {
+  try {
+    const modules = await db.Module.findAll({
+      where: {
+        id: {
+          [Op.in]: macs
+        }
+      },
+      include: [
+        {
+          model: db.Module,
+          as: "entangledModule",
+          attributes: ["id"]
+        }
+      ]
+    })
+
+    // Collect the associated entangled module IDs
+    const associatedModuleIds = new Set()
+    modules.forEach((module) => {
+      module.entangledModule.forEach((em) => associatedModuleIds.add(em.id))
+    })
+
+    return Array.from(associatedModuleIds)
+  } catch (error) {
+    console.error("Error in getAllEntangled:", error)
+    throw error
+  }
 }

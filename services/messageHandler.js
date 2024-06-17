@@ -7,7 +7,7 @@ import { createSensor } from "../controllers/SensorController.js"
 
 import { createSensorReading } from "../controllers/SensorReadingController.js"
 
-import { createMotor } from "../controllers/MotorController.js"
+import { createMotor, updateMotor } from "../controllers/MotorController.js"
 import { createVoxel } from "../controllers/VoxelController.js"
 
 const MOTOR_AMOUNT = 2
@@ -29,6 +29,9 @@ export function handleMessage(msg, ws) {
 
     case "sensor_reading":
       handleSensorReadingMessage(jsonMsg)
+      break
+    case "motor_angle":
+      handleMotorAngleMessage(jsonMsg)
       break
   }
 }
@@ -71,9 +74,16 @@ function handleHelloMessage(msg, ws) {
 }
 
 function handleSensorReadingMessage(msg) {
-  console.log("value received")
-  console.log(msg.value)
   createSensorReading(msg.sensor_id, msg.value, msg.sensor_type)
+    .then(console.log("Sensor reading created"))
+    .catch((err) =>
+      console.error("Could not create a sensor reading in the database", err)
+    )
+}
+
+function handleMotorAngleMessage(msg) {
+  console.log("hello")
+  updateMotor(msg.id, msg.value)
     .then(console.log("Sensor reading created"))
     .catch((err) =>
       console.error("Could not create a sensor reading in the database", err)
