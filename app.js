@@ -87,7 +87,7 @@ setInterval(async () => {
 //this runs watching the database every second, and
 //then watchDatabase(clients) doesn't have a while true loop anymore
 //this is done this way in order to make sure that the clients object is passed to watchDatabase as often as possible
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 5050
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
