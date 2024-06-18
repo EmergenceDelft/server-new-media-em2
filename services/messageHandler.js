@@ -23,7 +23,7 @@ export async function handleMessage(msg, ws) {
   switch (jsonMsg.type) {
     /* Initial message sent by the ESP to the server. */
     case "hello":
-      await handleHelloMessage(jsonMsg, ws)
+      handleHelloMessage(jsonMsg, ws)
       break
 
     case "sensor_reading":
@@ -40,6 +40,7 @@ async function handleHelloMessage(msg, ws) {
   ws.mac_address = msg.mac_address
 
   let moduleOrNull = await getModuleByMacAddress(msg.mac_address)
+  console.log(moduleOrNull)
   if (moduleOrNull !== null) {
     console.log(msg.mac_address)
     await createModule(msg.mac_address)
