@@ -51,7 +51,7 @@ async function updateMotorsInDB(newEntries, clients) {
     (reading) => reading.type === "ULTRASOUND"
   )
 
-  await clients.foreach((client) => {
+  await clients.forEach((client) => {
     micReadings.filter(
       (x) => extractMacAddress(x.sensorId) == client.mac_address
     )
