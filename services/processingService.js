@@ -97,7 +97,7 @@ async function updateMotorsBasedOnProximity(readings, clients) {
   console.log(clients.map((x) => x.mac_address))
   //clients of type websoscket client
   const isClose = readings.some(
-    (reading) => reading.value <= 150 && reading.value != 0
+    (reading) => reading.value <= 50 && reading.value != 0
   )
 
   //here macs from all entangled
@@ -107,7 +107,7 @@ async function updateMotorsBasedOnProximity(readings, clients) {
   console.log(newMacs)
   if (!isClose) {
     //far proximity
-    let motors1 = await dbUpdateManual(macs, "TRANSPARENCY", 70)
+    let motors1 = await dbUpdateManual(macs, "TRANSPARENCY", 90)
     let motors2 = await dbUpdateAuto(macs, "COLOR", false) //boolean which means start moving
     console.log("--------------------------")
     console.log("far proximity")
