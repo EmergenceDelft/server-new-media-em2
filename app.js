@@ -4,6 +4,7 @@ import sequelize from "./services/db.js"
 import watchDatabase from "./services/watchDatabase.js"
 import fetchDbRoutes from "./api/fetchDbRoutes.js"
 import moduleApi from "./api/moduleApi.js"
+import entanglementApi from "./api/entanglementApi.js"
 import cors from "cors"
 import bodyParser from "body-parser"
 
@@ -43,6 +44,7 @@ app.use(function (req, res, next) {
 
 app.use(fetchDbRoutes)
 app.use(moduleApi)
+app.use(entanglementApi)
 
 app.get("/", async (req, res) => {
   res.render("index")
@@ -55,7 +57,6 @@ app.ws("/echo", async function (ws, req) {
   ws.on("message", async function (msg) {
     try {
       handleMessage(msg, ws)
-
     } catch (error) {
       console.error("Error parsing or processing message:", error)
     }

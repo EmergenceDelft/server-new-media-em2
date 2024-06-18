@@ -1,4 +1,4 @@
-import { DataTypes } from "sequelize"
+import { DataTypes, Sequelize } from "sequelize"
 
 import Module from "./Module.js"
 
@@ -7,14 +7,14 @@ const Entanglement = (sequelize) => {
     moduleId: {
       type: DataTypes.STRING,
       references: {
-        model: Module,
+        model: Module(sequelize, Sequelize),
         key: "id"
       }
     },
     relatedModuleId: {
       type: DataTypes.STRING,
       references: {
-        model: Module,
+        model: Module(sequelize, Sequelize),
         key: "id"
       }
     }

@@ -3,7 +3,7 @@ import {
   createEntanglement,
   deleteEntanglement,
   readEntanglements
-} from "../controllers/EntanglementController"
+} from "../controllers/EntanglementController.js"
 const entanglementApi = express.Router()
 
 /*

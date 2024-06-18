@@ -71,7 +71,7 @@ module.exports = {
         id: `${voxels[0].id}::COLOR`,
         mac: generateRandomMac(), // Add random MAC address
         type: "COLOR",
-        movement: true,
+        movement: "MANUAL",
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -79,7 +79,7 @@ module.exports = {
         id: `${voxels[0].id}::TRANSPARENCY`,
         mac: generateRandomMac(), // Add random MAC address
         type: "TRANSPARENCY",
-        movement: true,
+        movement: "MANUAL",
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -87,7 +87,7 @@ module.exports = {
         id: `${voxels[1].id}::COLOR`,
         mac: generateRandomMac(), // Add random MAC address
         type: "COLOR",
-        movement: true,
+        movement: "MANUAL",
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -95,7 +95,7 @@ module.exports = {
         id: `${voxels[1].id}::TRANSPARENCY`,
         mac: generateRandomMac(), // Add random MAC address
         type: "TRANSPARENCY",
-        movement: true,
+        movement: "MANUAL",
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -103,7 +103,7 @@ module.exports = {
         id: `${voxels[2].id}::COLOR`,
         mac: generateRandomMac(), // Add random MAC address
         type: "COLOR",
-        movement: true,
+        movement: "MANUAL",
         createdAt: new Date(),
         updatedAt: new Date()
       },
@@ -111,7 +111,7 @@ module.exports = {
         id: `${voxels[2].id}::TRANSPARENCY`,
         mac: generateRandomMac(), // Add random MAC address
         type: "TRANSPARENCY",
-        movement: true,
+        movement: "MANUAL",
         createdAt: new Date(),
         updatedAt: new Date()
       }
