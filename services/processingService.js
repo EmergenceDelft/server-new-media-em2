@@ -5,13 +5,16 @@ import { Op } from "sequelize"
 const macAddressLength = 17
 
 export async function processDatabaseEntries(newEntries, clients) {
-  const updatedMotors = await updateMotorsInDB(newEntries, clients)
+  await updateMotorsInDB(newEntries, clients)
 
   let macs = clients.map((client) => client.mac_address)
   let newMacs = await getAllEntangled(macs)
 
   console.log("we would like to send to these macs")
   console.log(newMacs)
+
+  newMacs = macs
+  let updatedMotors = await getAllMotors()
 
   if (updatedMotors) {
     console.log("hello")
@@ -45,23 +48,36 @@ async function updateMotorsInDB(newEntries, clients) {
   )
   //dataTypes ENUM here please, TODO
 
-  let motors1 = updateMotorsBasedOnProximity(proximityReadings, clients)
-  //let motors2 = updateMotorsBasedOnMicrophone(micReadings, clients)
-
-  //this could be done in the future, server side processing of microphone
-  //for now it was easier and quicker to do it just client side
-  //but there are more interesting ways to process audios from many sources
-
-  //TODO also combine motors 1 and motors 2, this is a bit hard, be careful with ordering of the arrays
-  return motors1
+  await updateMotorsBasedOnProximity(proximityReadings, clients)
+  await updateMotorsBasedOnMicrophone(micReadings, clients)
+  //TODO combine motors 1 and motors 2
 }
 
-// async function updateMotorsBasedOnMicrophone(readings, clients) {}
+async function updateMotorsBasedOnMicrophone(readings, clients) {
+  const isNoisy = readings.some((reading) => reading.value >= 500)
+  let macs = clients.map((client) => client.mac_address)
+  if (isNoisy) {
+    //noisy
+    //set all auto and auto jittery to auto jittery
+    //or set all color motors to auto jittery
+    let motors2 = await dbUpdateAutoJitter(macs, "COLOR", true) //move continously with jitter,
+    //true means select only
+    console.log("--------------------------")
+    console.log("noisy")
+    return motors2
+  } else {
+    //quiet
+    let motors2 = await dbUpdateAuto(macs, "COLOR", true) //move continously without jitter
+    console.log("--------------------------")
+    console.log("quiet")
+    return motors2
+  }
+}
 
 async function updateMotorsBasedOnProximity(readings, clients) {
   //clients of type websoscket client
   const isClose = readings.some(
-    (reading) => reading.value <= 50 && reading.value != 0
+    (reading) => reading.value <= 150 && reading.value != 0
   )
 
   //here macs from all entangled
@@ -71,30 +87,43 @@ async function updateMotorsBasedOnProximity(readings, clients) {
   console.log(newMacs)
   if (!isClose) {
     //far proximity
-    let motors1 = await dbUpdateAllTransparencyFilters(newMacs, 90)
-    let motors2 = await dbUpdateAllColorFilters(newMacs, true) //boolean which means start moving
+    let motors1 = await dbUpdateManual(macs, "TRANSPARENCY", 80)
+    let motors2 = await dbUpdateAuto(macs, "COLOR", false) //boolean which means start moving
     console.log("--------------------------")
     console.log("far proximity")
     return interleave(motors1, motors2)
   } else {
     //near proximity
-    let motors1 = await dbUpdateAllTransparencyFilters(newMacs, 0)
-    let motors2 = await dbUpdateAllColorFilters(newMacs, false) //bolean which means stop moving
+    let motors1 = await dbUpdateManual(macs, "TRANSPARENCY", 0)
+    let _curr = 30
+    let motors2 = await dbUpdateManual(macs, "COLOR", _curr)
+    //this is where we need to make new function
+    //to get all entangled motors
+
+    //TODO
+    //for each firstMac in macs
+    //get entangledMacs
+    //set firstMac angle to firstMac current angle (from database)
+    //set entangledMacs angles to firstMac's current angle
+
     console.log("--------------------------")
     console.log("near proximity")
     return interleave(motors1, motors2)
   }
 }
 
-async function dbUpdateAllTransparencyFilters(macs, angle) {
+async function dbUpdateManual(macs, type, angle) {
   const transaction = await sequelize.transaction()
   try {
     const [numberOfAffectedRows, affectedRows] = await db.Motor.update(
-      { angle: angle }, // Set angle to angle
+      {
+        angle: angle, // Set angle to angle
+        movement: "MANUAL" // Set movement to "MANUAL"
+      },
       {
         where: {
           [Op.and]: [
-            { type: "TRANSPARENCY" }, // Constrain the type to PROXIMITY
+            { type: type }, // Constrain the type to PROXIMITY
             { mac: { [Op.in]: macs } } // Check if mac is present in the macs array
           ]
         },
@@ -112,15 +141,54 @@ async function dbUpdateAllTransparencyFilters(macs, angle) {
   }
 }
 
-async function dbUpdateAllColorFilters(macs, moving) {
+async function dbUpdateAuto(macs, type, onlySome) {
+  const transaction = await sequelize.transaction()
+  try {
+    // Construct the base where clause
+    const baseWhereClause = {
+      [Op.and]: [
+        { type: type }, // Constrain the type
+        { mac: { [Op.in]: macs } } // Check if mac is present in the macs array
+      ]
+    }
+
+    // Add additional condition if onlySome is true
+    if (onlySome) {
+      baseWhereClause[Op.and].push({
+        movement: {
+          [Op.in]: ["AUTO", "AUTOJITTER"] // Only update motors with movement "AUTO" or "AUTOJITTER"
+        }
+      })
+    }
+
+    const [numberOfAffectedRows, affectedRows] = await db.Motor.update(
+      { movement: "AUTO" }, // Set the movement to "AUTO"
+      {
+        where: baseWhereClause,
+        returning: true,
+        transaction
+      }
+    )
+
+    await transaction.commit()
+    console.log("All motors updated successfully")
+    return affectedRows
+  } catch (error) {
+    await transaction.rollback()
+    console.error("Error updating Motors object:", error)
+    return null
+  }
+}
+
+async function dbUpdateAutoJitter(macs, type) {
   const transaction = await sequelize.transaction()
   try {
     const [numberOfAffectedRows, affectedRows] = await db.Motor.update(
-      { movement: moving }, // Set the movement to the moving variable, true if far_proximity, false if close_proximit
+      { movement: "AUTOJITTER" }, // Set the movement to the moving variable, true if far_proximity, false if close_proximit
       {
         where: {
           [Op.and]: [
-            { type: "COLOR" }, // Constrain the type to PROXIMITY
+            { type: type }, // Constrain the type to COLOR
             { mac: { [Op.in]: macs } } // Check if mac is present in the macs array
           ]
         },
@@ -157,6 +225,13 @@ function motorsToJson(filteredMotors) {
   const jsonMotorsArray = filteredMotors.map((data_values, index) => {
     const motorData = { motor_address: index }
 
+    if (data_values.id !== null) {
+      motorData.id = data_values.id
+    }
+
+    if (data_values.type !== null) {
+      motorData.type = data_values.type
+    }
     if (data_values.angle !== null) {
       motorData.angle = data_values.angle
     }
@@ -203,5 +278,14 @@ async function getAllEntangled(macs) {
   } catch (error) {
     console.error("Error in getAllEntangled:", error)
     throw error
+  }
+}
+
+async function getAllMotors() {
+  try {
+    const motors = await db.Motor.findAll()
+    return motors
+  } catch (error) {
+    console.error("Error fetching motors:", error)
   }
 }

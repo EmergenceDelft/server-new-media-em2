@@ -54,9 +54,8 @@ app.ws("/echo", async function (ws, req) {
 
   ws.on("message", async function (msg) {
     try {
-      console.log("handling")
       handleMessage(msg, ws)
-      console.log("done handling")
+
     } catch (error) {
       console.error("Error parsing or processing message:", error)
     }
@@ -76,7 +75,7 @@ setInterval(async () => {
   }
 }, 10000)
 
-const pollingInterval = 100
+const pollingInterval = 500
 setInterval(async () => {
   try {
     const clientsWithoutTime = clients.map(({ ws, time }) => ws)

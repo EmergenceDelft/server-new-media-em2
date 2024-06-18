@@ -9,7 +9,7 @@ export async function createSensorReading(sensor_id, value, ty) {
       sensorId: sensor_id,
       value: value,
       type: ty
-    }).then(console.log("Sensor readings created!"))
+    })
   } catch (error) {
     console.log(error)
   }

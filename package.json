@@ -7,7 +7,19 @@
     "seed:db": "npx sequelize-cli db:seed:all"
   },
   "type": "module",
-  "dependencies": {
+  "description": "first server setup",
+  "main": "app.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/EmergenceDelft/server-new-media-em2.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/EmergenceDelft/server-new-media-em2/issues"
+  },
+  "homepage": "https://github.com/EmergenceDelft/server-new-media-em2#readme",
+   "dependencies": {
     "body-parser": "^1.20.2",
     "chartjs-adapter-date-fns": "^3.0.0",
     "cors": "^2.8.5",
@@ -21,18 +33,6 @@
     "uuid": "^9.0.1",
     "websockets": "^0.2.0"
   },
-  "description": "first server setup",
-  "main": "app.js",
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/EmergenceDelft/server-new-media-em2.git"
-  },
-  "author": "",
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/EmergenceDelft/server-new-media-em2/issues"
-  },
-  "homepage": "https://github.com/EmergenceDelft/server-new-media-em2#readme",
   "devDependencies": {
     "@eslint/js": "^9.2.0",
     "eslint": "^8.57.0",
