@@ -30,11 +30,6 @@ export async function updateMotor(id, value) {
     )
 
     // Check if any rows were updated
-    if (updatedCount > 0) {
-      console.log(`Successfully updated ${updatedCount} motor(s) with id ${id}`)
-    } else {
-      console.log(`No motors found with id ${id}`)
-    }
   } catch (error) {
     console.error("Error updating motors:", error)
   }

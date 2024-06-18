@@ -11,7 +11,7 @@ export async function processDatabaseEntries(newEntries, clients) {
   let newMacs = await getAllEntangled(macs)
 
   console.log("we would like to send to these macs")
-  console.log(newMacs)
+  console.log(macs)
 
   newMacs = macs
   let updatedMotors = await getAllMotors()
@@ -37,30 +37,8 @@ export async function processDatabaseEntries(newEntries, clients) {
   }
 }
 
-const updateClients = async (readingsByMac, updateFunction, clients) => {
-  const macAddresses = Object.keys(readingsByMac)
-  for (const macAddress of macAddresses) {
-    const client = clients.find((client) => client.mac_address === macAddress)
-    if (client) {
-      await updateFunction(readingsByMac[macAddress], client)
-    }
-  }
-}
-
 const extractMacAddress = (sensorId) => {
   return sensorId.split("::")[0]
-}
-
-// Function to group readings by MAC address
-const groupByMacAddress = (readings) => {
-  return readings.reduce((acc, reading) => {
-    const macAddress = extractMacAddress(reading.sensorId)
-    if (!acc[macAddress]) {
-      acc[macAddress] = []
-    }
-    acc[macAddress].push(reading)
-    return acc
-  }, {})
 }
 
 async function updateMotorsInDB(newEntries, clients) {
@@ -73,17 +51,37 @@ async function updateMotorsInDB(newEntries, clients) {
     (reading) => reading.type === dataTypes.ULTRASOUND
   )
 
-  const micReadingsByMac = groupByMacAddress(micReadings)
-  const proximityReadingsByMac = groupByMacAddress(proximityReadings)
+  const groupReadingsByClient = (newEntries) => {
+    return newEntries.reduce((acc, reading) => {
+      const macAddress = extractMacAddress(reading.sensorId)
+      const client = clients.find((client) => client.mac_address === macAddress)
+      if (client) {
+        if (!acc[client.id]) {
+          acc[client.id] = {
+            client: client,
+            micReadings: [],
+            proximityReadings: []
+          }
+        }
+        if (reading.type === dataTypes.MICROPHONE) {
+          acc[client.id].micReadings.push(reading)
+        } else if (reading.type === dataTypes.ULTRASOUND) {
+          acc[client.id].proximityReadings.push(reading)
+        }
+      }
+      return acc
+    }, {})
+  }
+
+  const groupedReadings = groupReadingsByClient(newEntries)
+
+  const updatePromises = Object.values(groupedReadings).map(async (group) => {
+    await updateMotorsBasedOnProximity(group.proximityReadings, group.client)
+    await updateMotorsBasedOnMicrophone(group.micReadings, group.client)
+  })
+  await Promise.all(updatePromises)
 
   //dataTypes ENUM here please, TODO
-
-  await updateClients(
-    proximityReadingsByMac,
-    updateMotorsBasedOnProximity,
-    clients
-  )
-  await updateClients(micReadingsByMac, updateMotorsBasedOnMicrophone, clients)
 
   // await updateMotorsBasedOnProximity(proximityReadings, clients)
   // await updateMotorsBasedOnMicrophone(micReadings, clients)
@@ -177,7 +175,6 @@ async function dbUpdateManual(macs, type, angle) {
       } // sequelize interprets this as module_mac_address matches at least one value in macs
     )
     await transaction.commit()
-    console.log("All motors updated succesfully")
     return affectedRows
   } catch (error) {
     await transaction.rollback()
@@ -216,7 +213,6 @@ async function dbUpdateAuto(macs, type, onlySome) {
     )
 
     await transaction.commit()
-    console.log("All motors updated successfully")
     return affectedRows
   } catch (error) {
     await transaction.rollback()
@@ -242,7 +238,6 @@ async function dbUpdateAutoJitter(macs, type) {
       } // sequelize interprets this as module_mac_address matches at least one value in macs
     )
     await transaction.commit()
-    console.log("All motors updated succesfully")
     return affectedRows
   } catch (error) {
     await transaction.rollback()

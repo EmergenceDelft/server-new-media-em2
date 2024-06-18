@@ -61,20 +61,18 @@ app.ws("/echo", async function (ws, req) {
   })
 })
 
-setInterval(async () => {
-  try {
-    console.log("setting everything to dead")
-    await updateAllConnections(false)
-  } catch (err) {
-    console.error("Error updating all connections:", err)
-  }
-}, 10000)
+// setInterval(async () => {
+//   try {
+//     await updateAllConnections(false)
+//   } catch (err) {
+//     console.error("Error updating all connections:", err)
+//   }
+// }, 10000)
 
 const pollingInterval = 500
 setInterval(async () => {
   try {
     const clientsWithoutTime = clients.map(({ ws, time }) => ws)
-    console.log("this is my original list of clients")
     watchDatabase(clientsWithoutTime, pollingInterval)
   } catch (err) {
     console.error("Error watching database", err)
