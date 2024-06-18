@@ -20,9 +20,8 @@ export function handleMessage(msg, ws) {
     console.error("Error in parsing message data.", err)
   }
 
-  // Initial message sent by the ESP to the server.
-  // Sadly JS does not have native enum support.
   switch (jsonMsg.type) {
+    /* Initial message sent by the ESP to the server. */
     case "hello":
       handleHelloMessage(jsonMsg, ws)
       break
@@ -37,7 +36,7 @@ export function handleMessage(msg, ws) {
 }
 
 function handleHelloMessage(msg, ws) {
-  //Check if the mac address already exists in DB, if not, create a new module
+  /* Creates a module in the database if it does not yet exist. */
   ws.mac_address = msg.mac_address
   getModuleByMacAddress(msg.mac_address).then((existingModel) => {
     if (!existingModel) {

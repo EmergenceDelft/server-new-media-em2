@@ -3,12 +3,7 @@ import expressWs from "express-ws"
 import sequelize from "./services/db.js"
 import watchDatabase from "./services/watchDatabase.js"
 import fetchDbRoutes from "./routes/fetchDbRoutes.js"
-import db from "./models/index.js" // Assuming this imports your Sequelize models
-
-import {
-  updateAllConnections,
-  updateModule
-} from "./controllers/ModuleController.js"
+import db from "./models/index.js"
 import { handleMessage } from "./services/messageHandler.js"
 
 var app = express()
@@ -44,19 +39,17 @@ app.ws("/echo", async function (ws, req) {
   const time = Date.now()
   clients.push({ ws, time })
 
-  console.log("updated?")
   ws.on("message", async function (msg) {
+    /* Handle incoming messages by delegating them to a message handler. */
     try {
       handleMessage(msg, ws)
-      //await updateModule(mac, true)
     } catch (error) {
       console.error("Error parsing or processing message:", error)
     }
   })
 
   ws.on("close", function () {
-    // Remove the WebSocket client from the array when disconnected
-    //updateModule(mac, false)
+    /* Remove the WebSocket client from the array when disconnected */
     clients = clients.filter((client) => client.ws !== ws)
   })
 })
