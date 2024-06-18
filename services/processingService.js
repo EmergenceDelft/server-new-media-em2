@@ -95,8 +95,15 @@ async function updateMotorsBasedOnProximity(readings, clients) {
   } else {
     //near proximity
     let motors1 = await dbUpdateManual(macs, "TRANSPARENCY", 0)
-    let _curr = 30
-    let motors2 = await dbUpdateManual(macs, "COLOR", _curr)
+
+    //from each mac get current angle
+    let angleMapping = await getCurrentAngles(macs)
+
+    let updatePromises = macs.map((mac) => {
+      const angle = angleMapping[mac]
+      return dbUpdateManual([mac], "COLOR", angle)
+    })
+    let motors2 = await Promise.all(updatePromises)
     //this is where we need to make new function
     //to get all entangled motors
 
@@ -287,5 +294,23 @@ async function getAllMotors() {
     return motors
   } catch (error) {
     console.error("Error fetching motors:", error)
+  }
+}
+
+async function getCurrentAngles(macs) {
+  try {
+    const motors = await db.Motor.findAll({
+      attributes: ["mac", "angle"],
+      where: {
+        [Op.and]: [{ mac: { [Op.in]: macs } }, { type: "COLOR" }]
+      }
+    })
+    return motors.reduce((acc, motor) => {
+      acc[motor.mac] = motor.angle
+      return acc
+    }, {})
+  } catch (error) {
+    console.error("Error fetching current angles:", error)
+    return {}
   }
 }
