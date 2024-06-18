@@ -45,7 +45,7 @@ async function handleHelloMessage(msg, ws) {
       await msg.sensors.forEach(async (sensor_type) => {
         await createSensor(sensor_type, msg.mac_address)
         for (let i = 0; i < VOXEL_AMOUNT; i++) {
-          await createVoxel(msg.mac_address, i)
+          let voxelId = await createVoxel(msg.mac_address, i)
           await createMotor(
             voxelId,
             0,
