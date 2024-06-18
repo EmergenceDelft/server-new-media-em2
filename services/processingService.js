@@ -37,19 +37,57 @@ export async function processDatabaseEntries(newEntries, clients) {
   }
 }
 
+const updateClients = async (readingsByMac, updateFunction, clients) => {
+  const macAddresses = Object.keys(readingsByMac)
+  for (const macAddress of macAddresses) {
+    const client = clients.find((client) => client.mac_address === macAddress)
+    if (client) {
+      await updateFunction(readingsByMac[macAddress], client)
+    }
+  }
+}
+
+const extractMacAddress = (sensorId) => {
+  return sensorId.split("::")[0]
+}
+
+// Function to group readings by MAC address
+const groupByMacAddress = (readings) => {
+  return readings.reduce((acc, reading) => {
+    const macAddress = extractMacAddress(reading.sensorId)
+    if (!acc[macAddress]) {
+      acc[macAddress] = []
+    }
+    acc[macAddress].push(reading)
+    return acc
+  }, {})
+}
+
 async function updateMotorsInDB(newEntries, clients) {
   //split newEntries into sensor and microphone entries
 
   const micReadings = newEntries.filter(
-    (reading) => reading.type == "MICROPHONE"
+    (reading) => reading.type === dataTypes.MICROPHONE
   )
   const proximityReadings = newEntries.filter(
-    (reading) => reading.type == "ULTRASOUND"
+    (reading) => reading.type === dataTypes.ULTRASOUND
   )
+
+  const micReadingsByMac = groupByMacAddress(micReadings)
+  const proximityReadingsByMac = groupByMacAddress(proximityReadings)
+
   //dataTypes ENUM here please, TODO
 
-  await updateMotorsBasedOnProximity(proximityReadings, clients)
-  await updateMotorsBasedOnMicrophone(micReadings, clients)
+  await updateClients(
+    proximityReadingsByMac,
+    updateMotorsBasedOnProximity,
+    clients
+  )
+  await updateClients(micReadingsByMac, updateMotorsBasedOnMicrophone, clients)
+
+  // await updateMotorsBasedOnProximity(proximityReadings, clients)
+  // await updateMotorsBasedOnMicrophone(micReadings, clients)
+
   //TODO combine motors 1 and motors 2
 }
 
