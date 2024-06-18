@@ -68,7 +68,7 @@ function handleSensorReadingMessage(msg) {
   console.log("value received")
   console.log(msg.value)
   createSensorReading(msg.sensor_id, msg.value, msg.sensor_type)
-    .then(console.log("Sensor reading created"))
+    .then(console.log("Sensor reading created: ", msg.value))
     .catch((err) =>
       console.error("Could not create a sensor reading in the database", err)
     )
