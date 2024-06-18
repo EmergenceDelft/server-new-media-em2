@@ -13,7 +13,7 @@ import { createVoxel } from "../controllers/VoxelController.js"
 const MOTOR_AMOUNT = 2
 const VOXEL_AMOUNT = 1
 
-export function handleMessage(msg, ws) {
+export async function handleMessage(msg, ws) {
   try {
     var jsonMsg = JSON.parse(msg)
   } catch (err) {
@@ -23,7 +23,7 @@ export function handleMessage(msg, ws) {
   switch (jsonMsg.type) {
     /* Initial message sent by the ESP to the server. */
     case "hello":
-      handleHelloMessage(jsonMsg, ws)
+      await handleHelloMessage(jsonMsg, ws)
       break
 
     case "sensor_reading":
@@ -35,35 +35,24 @@ export function handleMessage(msg, ws) {
   }
 }
 
-function handleHelloMessage(msg, ws) {
-  /* Creates a module in the database if it does not yet exist. */
+/* Creates a module in the database if it does not yet exist. */
+async function handleHelloMessage(msg, ws) {
   ws.mac_address = msg.mac_address
-  getModuleByMacAddress(msg.mac_address).then((existingModel) => {
-    if (!existingModel) {
-      createModule(msg.mac_address).then(() =>
-        msg.sensors.forEach((sensor_type) => {
-          createSensor(sensor_type, msg.mac_address)
-            .then(() => {
-              for (let i = 0; i < VOXEL_AMOUNT; i++) {
-                createVoxel(msg.mac_address, i).then((voxelId) => {
-                  createMotor(
-                    voxelId,
-                    0,
-                    "TRANSPARENCY",
-                    "MANUAL",
-                    msg.mac_address
-                  )
-                  createMotor(voxelId, 1, "COLOR", "AUTO", msg.mac_address)
-                })
-              }
-            })
-            .catch((err) =>
-              console.error("Could not create a sensor in the database", err)
-            )
-        })
-      )
+
+  let moduleOrNull = await getModuleByMacAddress(msg.mac_address)
+  if (moduleOrNull !== null) {
+    await createModule(msg.mac_address)
+
+    for (let sensor_type of msg.sensors) {
+      await createSensor(sensor_type, msg.mac_address)
     }
-  })
+
+    for (let i = 0; i < VOXEL_AMOUNT; i++) {
+      let voxelId = await createVoxel(msg.mac_address, i)
+      await createMotor(voxelId, 0, "TRANSPARENCY", "MANUAL", msg.mac_address)
+      await createMotor(voxelId, 1, "COLOR", "AUTO", msg.mac_address)
+    }
+  }
 }
 
 function handleSensorReadingMessage(msg) {

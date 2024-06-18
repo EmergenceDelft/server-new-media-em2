@@ -42,7 +42,7 @@ app.ws("/echo", async function (ws, req) {
   ws.on("message", async function (msg) {
     /* Handle incoming messages by delegating them to a message handler. */
     try {
-      handleMessage(msg, ws)
+      await handleMessage(msg, ws)
     } catch (error) {
       console.error("Error parsing or processing message:", error)
     }
