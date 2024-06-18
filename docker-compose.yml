@@ -17,4 +17,4 @@ services:
       - "5050:5050" 
     depends_on:
       - postgres
-    command: ["npm", "start"]  # Command to start the Node.js application
+    command: ["npm", "run", "prod"]  # Command to start the Node.js application
