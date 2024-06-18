@@ -105,7 +105,7 @@ async function updateMotorsBasedOnProximity(readings, clients) {
   console.log(newMacs)
   if (!isClose) {
     //far proximity
-    let motors1 = await dbUpdateManual(macs, "TRANSPARENCY", 90)
+    let motors1 = await dbUpdateManual(macs, "TRANSPARENCY", 50)
     let motors2 = await dbUpdateAuto(macs, "COLOR", false) //boolean which means start moving
     console.log("--------------------------")
     console.log("far proximity")
