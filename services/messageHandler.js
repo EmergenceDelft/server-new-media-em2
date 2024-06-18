@@ -40,7 +40,7 @@ async function handleHelloMessage(msg, ws) {
   ws.mac_address = msg.mac_address
 
   let moduleOrNull = await getModuleByMacAddress(msg.mac_address)
-  if (moduleOrNull === null) {
+  if (!moduleOrNull) {
     console.log(msg.mac_address)
     await createModule(msg.mac_address)
 
