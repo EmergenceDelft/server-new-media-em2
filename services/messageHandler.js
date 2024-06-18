@@ -40,34 +40,28 @@ function handleHelloMessage(msg, ws) {
   ws.mac_address = msg.mac_address
   getModuleByMacAddress(msg.mac_address).then((existingModel) => {
     if (!existingModel) {
-      createModule(msg.mac_address)
-        .then(console.log("Module created"))
-        .then(() =>
-          msg.sensors.forEach((sensor_type) => {
-            createSensor(sensor_type, msg.mac_address)
-              .then(console.log(sensor_type + "Sensor created"))
-              .catch((err) =>
-                console.error("Could not create a sensor in the database", err)
-              )
-          })
-        )
-        .then(() => {
-          for (let i = 0; i < VOXEL_AMOUNT; i++) {
-            createVoxel(msg.mac_address, i)
-              .then(console.log("Voxel created"))
-              .then((voxelId) => {
-                createMotor(
-                  voxelId,
-                  0,
-                  "TRANSPARENCY",
-                  "MANUAL",
-                  msg.mac_address
-                )
-                createMotor(voxelId, 1, "COLOR", "AUTO", msg.mac_address)
-                console.log("2 Motors created")
-              })
-          }
+      createModule(msg.mac_address).then(() =>
+        msg.sensors.forEach((sensor_type) => {
+          createSensor(sensor_type, msg.mac_address)
+            .then(() => {
+              for (let i = 0; i < VOXEL_AMOUNT; i++) {
+                createVoxel(msg.mac_address, i).then((voxelId) => {
+                  createMotor(
+                    voxelId,
+                    0,
+                    "TRANSPARENCY",
+                    "MANUAL",
+                    msg.mac_address
+                  )
+                  createMotor(voxelId, 1, "COLOR", "AUTO", msg.mac_address)
+                })
+              }
+            })
+            .catch((err) =>
+              console.error("Could not create a sensor in the database", err)
+            )
         })
+      )
     }
   })
 }
