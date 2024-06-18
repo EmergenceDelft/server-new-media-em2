@@ -11,7 +11,7 @@ export async function processDatabaseEntries(newEntries, clients) {
   let newMacs = await getAllEntangled(macs)
 
   console.log("we would like to send to these macs")
-  console.log(macs)
+  console.log(newMacs)
 
   newMacs = macs
   let updatedMotors = await getAllMotors()
@@ -51,37 +51,19 @@ async function updateMotorsInDB(newEntries, clients) {
     (reading) => reading.type === dataTypes.ULTRASOUND
   )
 
-  const groupReadingsByClient = (newEntries) => {
-    return newEntries.reduce((acc, reading) => {
-      const macAddress = extractMacAddress(reading.sensorId)
-      const client = clients.find((client) => client.mac_address === macAddress)
-      if (client) {
-        if (!acc[client.id]) {
-          acc[client.id] = {
-            client: client,
-            micReadings: [],
-            proximityReadings: []
-          }
-        }
-        if (reading.type === dataTypes.MICROPHONE) {
-          acc[client.id].micReadings.push(reading)
-        } else if (reading.type === dataTypes.ULTRASOUND) {
-          acc[client.id].proximityReadings.push(reading)
-        }
-      }
-      return acc
-    }, {})
-  }
-
-  const groupedReadings = groupReadingsByClient(newEntries)
-
-  const updatePromises = Object.values(groupedReadings).map(async (group) => {
-    await updateMotorsBasedOnProximity(group.proximityReadings, group.client)
-    await updateMotorsBasedOnMicrophone(group.micReadings, group.client)
+  await clients.foreach((client) => {
+    micReadings.filter(
+      (x) => extractMacAddress(x.sensorId) == client.mac_address
+    )
+    proximityReadings.filter(
+      (x) => extractMacAddress(x.sensorId) == client.mac_address
+    )
+    updateMotorsBasedOnProximity(proximityReadings, client)
+    updateMotorsBasedOnMicrophone(micReadings, client)
   })
-  await Promise.all(updatePromises)
-
-  //dataTypes ENUM here please, TODO
+  //   update(readings, client)
+  //   update(readings, client)
+  // }
 
   // await updateMotorsBasedOnProximity(proximityReadings, clients)
   // await updateMotorsBasedOnMicrophone(micReadings, clients)
