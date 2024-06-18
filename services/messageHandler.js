@@ -41,17 +41,16 @@ async function handleHelloMessage(msg, ws) {
 
   let moduleOrNull = await getModuleByMacAddress(msg.mac_address)
   if (moduleOrNull !== null) {
+    console.log(msg.mac_address)
     await createModule(msg.mac_address)
 
     for (let sensor_type of msg.sensors) {
       await createSensor(sensor_type, msg.mac_address)
     }
 
-    for (let i = 0; i < VOXEL_AMOUNT; i++) {
-      let voxelId = await createVoxel(msg.mac_address, i)
-      await createMotor(voxelId, 0, "TRANSPARENCY", "MANUAL", msg.mac_address)
-      await createMotor(voxelId, 1, "COLOR", "AUTO", msg.mac_address)
-    }
+    let voxelId = await createVoxel(msg.mac_address, 0)
+    await createMotor(voxelId, 0, "TRANSPARENCY", "MANUAL", msg.mac_address)
+    await createMotor(voxelId, 1, "COLOR", "AUTO", msg.mac_address)
   }
 }
 
