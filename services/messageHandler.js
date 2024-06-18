@@ -23,7 +23,7 @@ export async function handleMessage(msg, ws) {
   switch (jsonMsg.type) {
     /* Initial message sent by the ESP to the server. */
     case "hello":
-      await handleHelloMessage(jsonMsg, ws)
+      handleHelloMessage(jsonMsg, ws)
       break
 
     case "sensor_reading":
