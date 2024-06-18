@@ -5,7 +5,7 @@ const environment = process.env.NODE_ENV || "development"
 let dbName, dbUser, dbPassword, dbHost
 
 if (environment === "production") {
-  dbName = process.env.DB_NAME || "new_media_production"
+  dbName = process.env.DB_NAME || "new_media"
   dbUser = process.env.DB_USER || "nmpr"
   dbPassword = process.env.DB_PASSWORD || "admin"
   dbHost = process.env.DB_HOST || "postgres"
