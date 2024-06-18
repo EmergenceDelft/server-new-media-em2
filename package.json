@@ -3,21 +3,10 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon app.js"
+    "dev": "NODE_ENV=development nodemon app.js",
+    "prod": "NODE_ENV=production node app.js"
   },
   "type": "module",
-  "dependencies": {
-    "chartjs-adapter-date-fns": "^3.0.0",
-    "ejs": "^3.1.10",
-    "express": "~4.16.1",
-    "express-ws": "^5.0.2",
-    "log": "^6.3.1",
-    "middleware": "^1.0.0",
-    "pg": "^8.11.5",
-    "sequelize": "^6.37.3",
-    "uuid": "^9.0.1",
-    "websockets": "^0.2.0"
-  },
   "description": "first server setup",
   "main": "app.js",
   "repository": {
@@ -30,6 +19,15 @@
     "url": "https://github.com/EmergenceDelft/server-new-media-em2/issues"
   },
   "homepage": "https://github.com/EmergenceDelft/server-new-media-em2#readme",
+  "dependencies": {
+    "express": "~4.16.1",
+    "express-ws": "^5.0.2",
+    "middleware": "^1.0.0",
+    "pg": "^8.11.5",
+    "sequelize": "^6.37.3",
+    "uuid": "^9.0.1",
+    "websockets": "^0.2.0"
+  },
   "devDependencies": {
     "@eslint/js": "^9.2.0",
     "eslint": "^8.57.0",

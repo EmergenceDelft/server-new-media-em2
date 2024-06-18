@@ -3,12 +3,7 @@ import expressWs from "express-ws"
 import sequelize from "./services/db.js"
 import watchDatabase from "./services/watchDatabase.js"
 import fetchDbRoutes from "./routes/fetchDbRoutes.js"
-import db from "./models/index.js" // Assuming this imports your Sequelize models
-
-import {
-  updateAllConnections,
-  updateModule
-} from "./controllers/ModuleController.js"
+import { updateAllConnections } from "./controllers/ModuleController.js"
 import { handleMessage } from "./services/messageHandler.js"
 
 var app = express()
@@ -87,7 +82,7 @@ setInterval(async () => {
 //this runs watching the database every second, and
 //then watchDatabase(clients) doesn't have a while true loop anymore
 //this is done this way in order to make sure that the clients object is passed to watchDatabase as often as possible
-const PORT = process.env.PORT || 3000
+const PORT = process.env.PORT || 5050
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
