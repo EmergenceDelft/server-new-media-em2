@@ -20,6 +20,7 @@ db.Sensor = Sensor(sequelize, Sequelize)
 db.SensorReading = SensorReading(sequelize, Sequelize)
 db.Motor = Motor(sequelize, Sequelize)
 
+
 //One Module has many Voxels
 db.Module.hasMany(db.Voxel)
 db.Voxel.belongsTo(db.Module)
@@ -31,6 +32,7 @@ db.Sensor.belongsTo(db.Module)
 //one Module has many motors
 db.Voxel.hasMany(db.Motor)
 db.Motor.belongsTo(db.Voxel)
+
 //One Sensor has many SensorReadings
 db.Sensor.hasMany(db.SensorReading)
 db.SensorReading.belongsTo(db.Sensor)
