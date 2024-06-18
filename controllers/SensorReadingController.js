@@ -5,7 +5,7 @@ const SensorReading = db.SensorReading
 // Exports a createModule function which can be used in the app
 export async function createSensorReading(sensor_id, value, ty) {
   try {
-    SensorReading.create({
+    await SensorReading.create({
       sensorId: sensor_id,
       value: value,
       type: ty
