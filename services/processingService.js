@@ -105,14 +105,14 @@ async function updateMotorsBasedOnProximity(readings, clients) {
   console.log(newMacs)
   if (!isClose) {
     //far proximity
-    let motors1 = await dbUpdateManual(macs, "TRANSPARENCY", 80)
+    let motors1 = await dbUpdateManual(macs, "TRANSPARENCY", 70)
     let motors2 = await dbUpdateAuto(macs, "COLOR", false) //boolean which means start moving
     console.log("--------------------------")
     console.log("far proximity")
     return interleave(motors1, motors2)
   } else {
     //near proximity
-    let motors1 = await dbUpdateManual(macs, "TRANSPARENCY", 0)
+    let motors1 = await dbUpdateManual(macs, "TRANSPARENCY", 70)
 
     //from each mac get current angle
     let angleMapping = await getCurrentAngles(macs)
