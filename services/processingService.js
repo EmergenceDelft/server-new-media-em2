@@ -51,16 +51,16 @@ async function updateMotorsInDB(newEntries, clients) {
     (reading) => reading.type === "ULTRASOUND"
   )
 
-  await clients.forEach((client) => {
-    micReadings.filter(
+  for (const client of clients) {
+    let mic1 = micReadings.filter(
       (x) => extractMacAddress(x.sensorId) == client.mac_address
     )
-    proximityReadings.filter(
+    let prox1 = proximityReadings.filter(
       (x) => extractMacAddress(x.sensorId) == client.mac_address
     )
-    updateMotorsBasedOnProximity(proximityReadings, [client])
-    updateMotorsBasedOnMicrophone(micReadings, [client])
-  })
+    await updateMotorsBasedOnProximity(prox1, [client])
+    await updateMotorsBasedOnMicrophone(mic1, [client])
+  }
   //   update(readings, client)
   //   update(readings, client)
   // }
