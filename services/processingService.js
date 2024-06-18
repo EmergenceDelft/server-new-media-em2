@@ -112,7 +112,7 @@ async function updateMotorsBasedOnProximity(readings, clients) {
     return interleave(motors1, motors2)
   } else {
     //near proximity
-    let motors1 = await dbUpdateManual(macs, "TRANSPARENCY", 70)
+    let motors1 = await dbUpdateManual(macs, "TRANSPARENCY", 0)
 
     //from each mac get current angle
     let angleMapping = await getCurrentAngles(macs)

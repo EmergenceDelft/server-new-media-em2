@@ -20,7 +20,8 @@ if (environment === "production") {
 /* Setup the DB connection */
 const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   host: dbHost,
-  dialect: "postgres"
+  dialect: "postgres",
+  logging: false // Disable logging
 })
 
 sequelize
