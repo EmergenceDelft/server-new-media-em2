@@ -45,10 +45,10 @@ async function updateMotorsInDB(newEntries, clients) {
   //split newEntries into sensor and microphone entries
 
   const micReadings = newEntries.filter(
-    (reading) => reading.type === dataTypes.MICROPHONE
+    (reading) => reading.type === "MICROPHONE"
   )
   const proximityReadings = newEntries.filter(
-    (reading) => reading.type === dataTypes.ULTRASOUND
+    (reading) => reading.type === "ULTRASOUND"
   )
 
   await clients.foreach((client) => {
