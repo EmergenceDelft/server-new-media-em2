@@ -17,10 +17,10 @@ export async function getModuleByMacAddress(mac_address) {
 // Exports a createModule function which can be used in the app
 export async function createModule(mac_address) {
   try {
-    Module.create({
+    await Module.create({
       id: mac_address,
       connection_alive: true
-    }).then(console.log("Module created with mac address " + mac_address))
+    })
   } catch (error) {
     console.log(error)
   }
