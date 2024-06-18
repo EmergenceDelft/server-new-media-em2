@@ -58,8 +58,8 @@ async function updateMotorsInDB(newEntries, clients) {
     proximityReadings.filter(
       (x) => extractMacAddress(x.sensorId) == client.mac_address
     )
-    updateMotorsBasedOnProximity(proximityReadings, client)
-    updateMotorsBasedOnMicrophone(micReadings, client)
+    updateMotorsBasedOnProximity(proximityReadings, [client])
+    updateMotorsBasedOnMicrophone(micReadings, [client])
   })
   //   update(readings, client)
   //   update(readings, client)
