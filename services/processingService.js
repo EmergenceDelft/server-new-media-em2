@@ -93,8 +93,6 @@ async function updateMotorsBasedOnMicrophone(readings, clients) {
 }
 
 async function updateMotorsBasedOnProximity(readings, clients) {
-  console.log(readings)
-  console.log(clients.map((x) => x.mac_address))
   //clients of type websoscket client
   const isClose = readings.some(
     (reading) => reading.value <= 50 && reading.value != 0
