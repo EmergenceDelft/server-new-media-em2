@@ -21,7 +21,7 @@ if (environment === "production") {
 const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   host: dbHost,
   dialect: "postgres",
-  // logging: false
+  logging: false
 })
 
 sequelize
