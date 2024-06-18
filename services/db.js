@@ -21,11 +21,11 @@ if (environment === "production") {
 const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
   host: dbHost,
   dialect: "postgres",
-  // logging: false
+  logging: false
 })
 
 sequelize
-  .authenticate({ force: true })
+  .authenticate()
   .then(() => {
     console.log("[Server] Connection to database established successfully.")
   })
