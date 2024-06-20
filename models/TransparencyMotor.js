@@ -1,5 +1,4 @@
 import { DataTypes } from "sequelize"
-import { MOTOR_OPTIONS, MOVEMENT_OPTIONS } from "../constants.js"
 
 const TransparencyMotor = (sequelize) => {
   const TransparencyMotor = sequelize.define("transparency_motor", {

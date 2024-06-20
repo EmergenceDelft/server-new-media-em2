@@ -17,6 +17,12 @@ if (environment === "production") {
   dbHost = process.env.DB_HOST || "localhost"
 }
 
+/* Setup the DB connection */
+const sequelize = new Sequelize(dbName, dbUser, dbPassword, {
+  host: dbHost,
+  dialect: "postgres"
+})
+
 sequelize
   .authenticate()
   .then(() => {

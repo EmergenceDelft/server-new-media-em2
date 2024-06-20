@@ -1,30 +1,25 @@
+/* General imports */
 import express from "express"
 import expressWs from "express-ws"
 import sequelize from "./services/db.js"
-import watchDatabase from "./services/watchDatabase.js"
-import fetchDbRoutes from "./api/fetchDbRoutes.js"
-import moduleApi from "./api/moduleApi.js"
-import entanglementApi from "./api/entanglementApi.js"
 import cors from "cors"
 import bodyParser from "body-parser"
 
-import db from "./models/index.js" // Assuming this imports your Sequelize models
-
-import { updateAllConnections } from "./controllers/ModuleController.js"
-import { handleMessage } from "./services/messageHandler.js"
+/* Router imports */
+import firmwareWs from "./routers/firmwareWs.js"
+import moduleApi from "./routers/moduleApi.js"
+import entanglementApi from "./routers/entanglementApi.js"
 
 var app = express()
-var ws = expressWs(app)
+expressWs(app)
 
-//Sync database
+/* Sync database */
 await sequelize
   .sync({ force: true })
   .then(() => {})
   .catch((err) => {
     console.log(err)
   })
-
-export var clients = []
 
 /* Global api configurations */
 app.use(
@@ -36,29 +31,11 @@ app.use(
 app.use(bodyParser.json())
 
 /* Frontend api routers*/
-app.use(fetchDbRoutes)
 app.use(moduleApi)
 app.use(entanglementApi)
 
-/* Web sockets router. Contains the main application code. */
-
-
-app.ws("/", async function (ws, req) {
-  const time = Date.now()
-  clients.push({ ws, time })
-
-  ws.on("message", async function (msg) {
-    try {
-      handleMessage(msg, ws)
-    } catch (error) {
-      console.error("Error parsing or processing message:", error)
-    }
-  })
-
-  ws.on("close", function () {
-    clients = clients.filter((client) => client.ws !== ws)
-  })
-})
+/* Firmware web sockets router. Contains the main application code. */
+app.use(firmwareWs)
 
 const PORT = process.env.PORT || 5050
 

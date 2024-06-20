@@ -1,78 +1,38 @@
+import { createColourMotor } from "../controllers/ColourMotorController.js"
 import { createModule, readModule } from "../controllers/ModuleController.js"
-
-import { createSensor } from "../controllers/SensorController.js"
-
-import { createSensorReading } from "../controllers/SensorReadingController.js"
-
-import { createMotor, updateMotor } from "../controllers/MotorController.js"
+import { createTransparencyMotor } from "../controllers/TransparencyMotorController.js"
 import { createVoxel } from "../controllers/VoxelController.js"
+import db from "./db.js"
 
-const VOXEL_AMOUNT = 2
-
-export function handleMessage(msg, ws) {
+export function handleMessage(message) {
   try {
-    var jsonMsg = JSON.parse(msg)
+    var jsonMessage = JSON.parse(message)
   } catch (err) {
     console.error("Error in parsing message data.", err)
   }
 
-  /* Initial message sent by the ESP to the server. */
-  switch (jsonMsg.type) {
+  switch (jsonMessage.type) {
+    /* Initial message sent by the ESP to the server. */
     case "hello":
-      handleHelloMessage(jsonMsg, ws)
-      break
-
-    case "motor_angle":
-      handleMotorAngleMessage(jsonMsg)
+      handleHelloMessage(jsonMessage)
       break
   }
 }
 
-function handleHelloMessage(msg, ws) {
-  //Check if the mac address already exists in DB, if not, create a new module
-  ws.mac_address = msg.mac_address
-  readModule(msg.mac_address).then((existingModel) => {
-    if (!existingModel) {
-      createModule(msg.mac_address)
-        .then(console.log("Module created"))
-        .then(() =>
-          msg.sensors.forEach((sensor_type) => {
-            createSensor(sensor_type, msg.mac_address)
-              .then(console.log(sensor_type + "Sensor created"))
-              .catch((err) =>
-                console.error("Could not create a sensor in the database", err)
-              )
-          })
-        )
-        .then(() => {
-          for (let i = 0; i < VOXEL_AMOUNT; i++) {
-            createVoxel(msg.mac_address, i)
-              .then(console.log("Voxel created"))
-              .then((voxelId) => {
-                createMotor(
-                  voxelId,
-                  0,
-                  "TRANSPARENCY",
-                  "MANUAL",
-                  msg.mac_address
-                )
-                createMotor(voxelId, 1, "COLOR", "AUTO", msg.mac_address)
-                console.log("2 Motors created")
-              })
-          }
-        })
+async function handleHelloMessage(message) {
+  const existingModule = await readModule(message.macAddress)
+
+  if (!existingModule) {
+    const transaction = await db.sequelize.transaction()
+
+    try {
+      const module = await createModule(message.macAddress)
+      const voxel = await createVoxel(module.id)
+      await createColourMotor(voxel.id)
+      await createTransparencyMotor(voxel.id)
+    } catch (error) {
+      console.log("Error creating module: ", error)
+      transaction.rollback()
     }
-  })
-}
-
-function handleSensorReadingMessage(msg) {
-  createSensorReading(msg.sensor_id, msg.value, msg.sensor_type).catch((err) =>
-    console.error("Could not create a sensor reading in the database", err)
-  )
-}
-
-function handleMotorAngleMessage(msg) {
-  updateMotor(msg.id, msg.value).catch((err) =>
-    console.error("Could not create a sensor reading in the database", err)
-  )
+  }
 }

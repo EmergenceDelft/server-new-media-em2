@@ -1,5 +1,4 @@
 import { DataTypes } from "sequelize"
-import { MOTOR_OPTIONS, MOVEMENT_OPTIONS } from "../constants.js"
 
 const ColourMotor = (sequelize) => {
   const ColourMotor = sequelize.define("colour_motor", {
@@ -26,15 +25,15 @@ const ColourMotor = (sequelize) => {
     },
     rotationIncrement: {
       type: DataTypes.INTEGER,
-      defaultValue: () => 1,
+      defaultValue: () => 1
     },
     minJitterIncrement: {
       type: DataTypes.INTEGER,
-      defaultValue: () => -2,
+      defaultValue: () => -2
     },
     maxJitterIncrement: {
       type: DataTypes.INTEGER,
-      defaultValue: () => 5,
+      defaultValue: () => 5
     }
   })
   return ColourMotor
