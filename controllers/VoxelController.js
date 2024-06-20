@@ -7,9 +7,9 @@ const Voxel = db.Voxel
 */
 
 /* Create */
-export async function createVoxel(moduleId, transaction = null) {
+export async function createVoxel(moduleId) {
   try {
-    return await Voxel.create(moduleId, { transaction })
+    return await Voxel.create({ moduleId })
   } catch (error) {
     console.error("Error creating voxel:", error)
     throw error

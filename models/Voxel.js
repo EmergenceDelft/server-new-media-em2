@@ -5,7 +5,10 @@ const Voxel = (sequelize) => {
   const Voxel = sequelize.define("voxel", {
     id: {
       type: DataTypes.STRING,
-      defaultValue: () => uuidv4(),
+      defaultValue: () => {
+        console.log(uuidv4())
+        return uuidv4()
+      },
       primaryKey: true,
       allowNull: false
     }

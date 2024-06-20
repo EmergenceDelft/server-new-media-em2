@@ -10,7 +10,7 @@ const Module = db.Module
 export async function createModule(macAddress) {
   try {
     const module = await Module.create({
-      mac_address: macAddress
+      id: macAddress
     })
     console.log(
       "Module created with mac address: " + macAddress + " and id: " + module.id

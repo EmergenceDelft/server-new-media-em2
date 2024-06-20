@@ -35,6 +35,10 @@ db.Module.belongsToMany(db.Module, {
   through: db.Entanglement
 })
 
+/* One Module has many Voxels */
+db.Module.hasMany(db.Voxel)
+db.Voxel.belongsTo(db.Module)
+
 /* One Voxel has one ColourMotors and one TransparencyMotors */
 db.Voxel.hasOne(db.ColourMotor)
 db.Voxel.hasOne(db.TransparencyMotor)
