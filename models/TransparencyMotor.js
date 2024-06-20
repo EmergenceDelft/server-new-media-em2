@@ -1,7 +1,8 @@
 import { DataTypes } from "sequelize"
+import { MOTOR_OPTIONS, MOVEMENT_OPTIONS } from "../constants.js"
 
-const Sensor = (sequelize) => {
-  const Sensor = sequelize.define("sensor", {
+const TransparencyMotor = (sequelize) => {
+  const TransparencyMotor = sequelize.define("transparency_motor", {
     id: {
       type: DataTypes.STRING,
       primaryKey: true,

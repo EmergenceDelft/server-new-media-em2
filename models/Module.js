@@ -7,13 +7,10 @@ const Module = (sequelize) => {
       primaryKey: true,
       allowNull: false
     },
-    connection_alive: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true
-    },
-    orientation: {
-      type: DataTypes.INTEGER,
-      default: 0
+    mac_address: {
+      type: DataTypes.STRING,
+      primaryKey: true,
+      allowNull: false
     },
     position_x: {
       type: DataTypes.FLOAT,

@@ -16,16 +16,12 @@ export function handleMessage(msg, ws) {
     console.error("Error in parsing message data.", err)
   }
 
-  // Initial message sent by the ESP to the server.
-  // Sadly JS does not have native enum support.
+  /* Initial message sent by the ESP to the server. */
   switch (jsonMsg.type) {
     case "hello":
       handleHelloMessage(jsonMsg, ws)
       break
 
-    case "sensor_reading":
-      handleSensorReadingMessage(jsonMsg)
-      break
     case "motor_angle":
       handleMotorAngleMessage(jsonMsg)
       break

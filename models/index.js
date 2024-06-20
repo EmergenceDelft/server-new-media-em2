@@ -12,7 +12,7 @@ import Module from "./Module.js"
 import Voxel from "./Voxel.js"
 import Sensor from "./Sensor.js"
 import SensorReading from "./SensorReading.js"
-import Motor from "./Motor.js"
+import Motor from "./ColourMotor.js"
 import Entanglement from "./Entanglement.js"
 
 db.Module = Module(sequelize, Sequelize)

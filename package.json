@@ -3,7 +3,8 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon app.js",
+    "dev": "NODE_ENV=development nodemon app.js",
+    "prod": "NODE_ENV=production node app.js",
     "seed:db": "npx sequelize-cli db:seed:all"
   },
   "type": "module",
@@ -19,13 +20,9 @@
     "url": "https://github.com/EmergenceDelft/server-new-media-em2/issues"
   },
   "homepage": "https://github.com/EmergenceDelft/server-new-media-em2#readme",
-   "dependencies": {
-    "body-parser": "^1.20.2",
-    "cors": "^2.8.5",
-    "ejs": "^3.1.10",
+  "dependencies": {
     "express": "~4.16.1",
     "express-ws": "^5.0.2",
-    "log": "^6.3.1",
     "middleware": "^1.0.0",
     "pg": "^8.11.5",
     "sequelize": "^6.37.3",
@@ -39,7 +36,6 @@
     "globals": "^15.1.0",
     "nodemon": "^3.1.0",
     "prettier": "^3.2.5",
-    "prettier-eslint": "^16.3.0",
-    "sequelize-cli": "^6.6.2"
+    "prettier-eslint": "^16.3.0"
   }
 }

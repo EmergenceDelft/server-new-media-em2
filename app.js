@@ -24,33 +24,26 @@ await sequelize
     console.log(err)
   })
 
-await db.SensorReading.truncate()
-
 export var clients = []
 
+/* Global api configurations */
 app.use(
   cors({
     origin: "http://localhost:3000",
     methods: ["GET", "POST", "PUT", "DELETE"]
   })
 )
-
 app.use(bodyParser.json())
 
-app.use(function (req, res, next) {
-  req.testing = "testing"
-  return next()
-})
-
+/* Frontend api routers*/
 app.use(fetchDbRoutes)
 app.use(moduleApi)
 app.use(entanglementApi)
 
-app.get("/", async (req, res) => {
-  res.render("index")
-})
+/* Web sockets router. Contains the main application code. */
 
-app.ws("/echo", async function (ws, req) {
+
+app.ws("/", async function (ws, req) {
   const time = Date.now()
   clients.push({ ws, time })
 
@@ -67,29 +60,6 @@ app.ws("/echo", async function (ws, req) {
   })
 })
 
-setInterval(async () => {
-  try {
-    console.log("setting everything to dead")
-    await updateAllConnections(false)
-  } catch (err) {
-    console.error("Error updating all connections:", err)
-  }
-}, 10000)
-
-const pollingInterval = 500
-setInterval(async () => {
-  try {
-    const clientsWithoutTime = clients.map(({ ws, time }) => ws)
-    console.log("this is my original list of clients")
-    watchDatabase(clientsWithoutTime, pollingInterval)
-  } catch (err) {
-    console.error("Error watching database", err)
-  }
-}, pollingInterval)
-
-//this runs watching the database every second, and
-//then watchDatabase(clients) doesn't have a while true loop anymore
-//this is done this way in order to make sure that the clients object is passed to watchDatabase as often as possible
 const PORT = process.env.PORT || 5050
 
 app.listen(PORT, () => {
