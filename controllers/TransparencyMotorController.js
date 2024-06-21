@@ -2,6 +2,10 @@ import db from "../models/index.js"
 
 const TransparencyMotor = db.TransparencyMotor
 
+/*
+  CRUD Functionality
+*/
+
 /* Create */
 export async function createTransparencyMotor(voxelId) {
   try {

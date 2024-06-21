@@ -5,7 +5,10 @@
   "scripts": {
     "dev": "NODE_ENV=development nodemon app.js",
     "prod": "NODE_ENV=production node app.js",
-    "seed:db": "npx sequelize-cli db:seed:all"
+    "seed:db": "npx sequelize-cli db:seed:all",
+    "drop:db": "npx sequelize-cli db:drop",
+    "create:db": "npx sequelize-cli db:create",
+    "migrate:db": "npx sequelize-cli db:migrate"
   },
   "type": "module",
   "description": "first server setup",

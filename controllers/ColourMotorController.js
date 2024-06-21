@@ -2,6 +2,10 @@ import db from "../models/index.js"
 
 const ColourMotor = db.ColourMotor
 
+/*
+  CRUD Functionality
+*/
+
 /* Create */
 export async function createColourMotor(voxelId) {
   try {

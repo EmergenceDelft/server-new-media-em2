@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize"
 import { v4 as uuidv4 } from "uuid"
 
 const ColourMotor = (sequelize) => {
-  const ColourMotor = sequelize.define("colour_motor", {
+  const ColourMotor = sequelize.define("colourMotor", {
     id: {
       type: DataTypes.STRING,
       defaultValue: () => uuidv4(),

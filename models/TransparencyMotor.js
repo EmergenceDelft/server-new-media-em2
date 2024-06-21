@@ -2,7 +2,7 @@ import { DataTypes } from "sequelize"
 import { v4 as uuidv4 } from "uuid"
 
 const TransparencyMotor = (sequelize) => {
-  const TransparencyMotor = sequelize.define("transparency_motor", {
+  const TransparencyMotor = sequelize.define("transparencyMotor", {
     id: {
       type: DataTypes.STRING,
       defaultValue: () => uuidv4(),

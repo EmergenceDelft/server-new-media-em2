@@ -31,7 +31,7 @@ export function handleMessage(message) {
 
   async function handleHelloMessage(message) {
     let existingModule = await readModule(message.macAddress)
-
+    console.log(existingModule)
     if (!existingModule) {
       const transaction = await db.sequelize.transaction()
 
@@ -51,27 +51,7 @@ export function handleMessage(message) {
       }
     }
 
-    /* Fetch all voxels along with their associated motors. */
-    const voxels = await existingModule.getVoxels({
-      include: [db.ColourMotor, db.TransparencyMotor]
-    })
-
-    const setupMessageContent = voxels.map((voxel) => ({
-      id: voxel.id,
-      colourMotor: {
-        minAngle: voxel.colour_motor.minAngle,
-        maxAngle: voxel.colour_motor.maxAngle,
-        rotationIncrement: voxel.colour_motor.rotationIncrement,
-        minJitterIncrement: voxel.colour_motor.minJitterIncrement,
-        maxJitterIncrement: voxel.colour_motor.maxJitterIncrement
-      },
-      transparencyMotor: {
-        activeAngle: voxel.transparency_motor.activeAngle,
-        inactiveAngle: voxel.transparency_motor.inactiveAngle
-      }
-    }))
-
-    const setupMessage = new Message("setup", setupMessageContent)
+    const setupMessage = new Message("setup", existingModule)
 
     connectionManager.sendMessage(existingModule.id, setupMessage)
   }

@@ -25,7 +25,14 @@ export async function createModule(macAddress) {
 /* Read */
 export async function readModule(macAddress) {
   try {
-    return await Module.findByPk(macAddress)
+    return await Module.findByPk(macAddress, {
+      include: [
+        {
+          model: db.Voxel,
+          include: [db.ColourMotor, db.TransparencyMotor]
+        }
+      ]
+    })
   } catch (error) {
     console.error("Error fetching module:", error)
     throw error
@@ -34,7 +41,14 @@ export async function readModule(macAddress) {
 
 export async function readModules() {
   try {
-    return await Module.findAll()
+    return await Module.findAll({
+      include: [
+        {
+          model: db.Voxel,
+          include: [db.ColourMotor, db.TransparencyMotor]
+        }
+      ]
+    })
   } catch (error) {
     console.error("Error fetching modules:", error)
     throw error
