@@ -65,7 +65,6 @@ export function handleMessage(message) {
 
     const moduleIds = new Set()
     entanglements.forEach((entanglement) => {
-      moduleIds.add(message.macAddress)
       moduleIds.add(entanglement.relatedModuleId)
     })
 

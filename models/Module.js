@@ -9,11 +9,11 @@ const Module = (sequelize) => {
     },
     minProximityThreshold: {
       type: DataTypes.FLOAT,
-      defaultValue: 1
+      defaultValue: 2
     },
     maxProximityThreshold: {
       type: DataTypes.FLOAT,
-      defaultValue: 120
+      defaultValue: 50
     },
     minAudioJitterThreshold: {
       type: DataTypes.FLOAT,
@@ -28,6 +28,14 @@ const Module = (sequelize) => {
       defaultValue: 100
     },
     audioSampleInterval: {
+      type: DataTypes.FLOAT,
+      defaultValue: 100
+    },
+    proximitySampleInterval: {
+      type: DataTypes.INTEGER,
+      defaultValue: 300
+    },
+    proximitySampleAmount: {
       type: DataTypes.FLOAT,
       defaultValue: 100
     },
