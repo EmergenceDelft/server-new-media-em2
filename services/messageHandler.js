@@ -30,8 +30,8 @@ export function handleMessage(message) {
   }
 
   async function handleHelloMessage(message) {
+    console.log("[Server] Received a HELLO message from: " + message.macAddress)
     let existingModule = await readModule(message.macAddress)
-    console.log(existingModule)
     if (!existingModule) {
       const transaction = await db.sequelize.transaction()
 
@@ -57,6 +57,10 @@ export function handleMessage(message) {
   }
 
   async function handleModuleMeasured(message) {
+    console.log(
+      "[Server] Received a MEASURED message from: " + message.macAddress
+    )
+
     const entanglements = await readEntanglements({
       where: {
         moduleId: message.macAddress
@@ -78,6 +82,9 @@ export function handleMessage(message) {
   }
 
   async function handleModuleUnmeasured(message) {
+    console.log(
+      "[Server] Received a UNMEASURED message from: " + message.macAddress
+    )
     const entanglements = await readEntanglements({
       where: {
         moduleId: message.macAddress
@@ -86,7 +93,6 @@ export function handleMessage(message) {
 
     const moduleIds = new Set()
     entanglements.forEach((entanglement) => {
-      moduleIds.add(message.macAddress)
       moduleIds.add(entanglement.relatedModuleId)
     })
 
