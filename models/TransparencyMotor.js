@@ -24,6 +24,14 @@ const TransparencyMotor = (sequelize) => {
         min: 0,
         max: 180
       }
+    },
+    snapIncrement: {
+      type: DataTypes.INTEGER,
+      defaultValue: () => 10,
+      validate: {
+        min: 0,
+        max: 180
+      }
     }
   })
   return TransparencyMotor
