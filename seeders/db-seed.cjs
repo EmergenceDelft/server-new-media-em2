@@ -3,42 +3,28 @@
 
 const { v4: uuidv4 } = require("uuid")
 
-function generateRandomMac() {
-  return Array(6)
-    .fill()
-    .map(() =>
-      Math.floor(Math.random() * 256)
-        .toString(16)
-        .padStart(2, "0")
-    )
-    .join(":")
-}
-
 module.exports = {
   up: async (queryInterface) => {
     // Seed data for Module
     const modules = [
       {
-        id: generateRandomMac(),
-        orientation: 1,
+        id: "95:16:91:a0:ce:4b",
         position_x: 0.5,
         position_y: 0.2,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        id: generateRandomMac(),
+        id: "a4:98:b3:14:c9:7f",
         position_x: 0.2,
         position_y: 0.5,
-        orientation: 1,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        id: generateRandomMac(),
+        id: "f4:e3:ca:f7:3b:09",
         position_x: 0.7,
         position_y: 0.1,
-        orientation: 2,
         createdAt: new Date(),
         updatedAt: new Date()
       }
@@ -48,148 +34,119 @@ module.exports = {
     // Seed data for Voxel
     const voxels = [
       {
-        id: `${modules[0].id}::VOXEL`,
+        id: uuidv4(),
+        moduleId: modules[0].id,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        id: `${modules[1].id}::VOXEL`,
+        id: uuidv4(),
+        moduleId: modules[1].id,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        id: `${modules[2].id}::VOXEL`,
+        id: uuidv4(),
+        moduleId: modules[2].id,
         createdAt: new Date(),
         updatedAt: new Date()
       }
     ]
     await queryInterface.bulkInsert("voxels", voxels)
 
-    // Seed data for Motor
-    const motors = [
+    // Seed data for ColourMotor and TransparencyMotor
+    const colourMotors = [
       {
-        id: `${voxels[0].id}::COLOR`,
-        mac: generateRandomMac(), // Add random MAC address
-        type: "COLOR",
-        movement: "MANUAL",
+        id: uuidv4(),
+        minAngle: 0,
+        maxAngle: 180,
+        rotationIncrement: 1,
+        minJitterIncrement: -2,
+        maxJitterIncrement: 5,
+        voxelId: voxels[0].id,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        id: `${voxels[0].id}::TRANSPARENCY`,
-        mac: generateRandomMac(), // Add random MAC address
-        type: "TRANSPARENCY",
-        movement: "MANUAL",
+        id: uuidv4(),
+        minAngle: 0,
+        maxAngle: 180,
+        rotationIncrement: 1,
+        minJitterIncrement: -2,
+        maxJitterIncrement: 5,
+        voxelId: voxels[1].id,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        id: `${voxels[1].id}::COLOR`,
-        mac: generateRandomMac(), // Add random MAC address
-        type: "COLOR",
-        movement: "MANUAL",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: `${voxels[1].id}::TRANSPARENCY`,
-        mac: generateRandomMac(), // Add random MAC address
-        type: "TRANSPARENCY",
-        movement: "MANUAL",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: `${voxels[2].id}::COLOR`,
-        mac: generateRandomMac(), // Add random MAC address
-        type: "COLOR",
-        movement: "MANUAL",
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: `${voxels[2].id}::TRANSPARENCY`,
-        mac: generateRandomMac(), // Add random MAC address
-        type: "TRANSPARENCY",
-        movement: "MANUAL",
+        id: uuidv4(),
+        minAngle: 0,
+        maxAngle: 180,
+        rotationIncrement: 1,
+        minJitterIncrement: -2,
+        maxJitterIncrement: 5,
+        voxelId: voxels[2].id,
         createdAt: new Date(),
         updatedAt: new Date()
       }
     ]
-    await queryInterface.bulkInsert("motors", motors)
+    await queryInterface.bulkInsert("colour_motors", colourMotors)
 
-    // Seed data for Sensor
-    const sensors = [
+    const transparencyMotors = [
       {
-        id: `${modules[0].id}::ULTRASOUND`,
-        type: "ULTRASOUND",
-        moduleId: modules[0].id,
+        id: uuidv4(),
+        activeAngle: 45,
+        inactiveAngle: 90,
+        voxelId: voxels[0].id,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        id: `${modules[0].id}::MICROPHONE`,
-        type: "MICROPHONE",
-        moduleId: modules[0].id,
+        id: uuidv4(),
+        activeAngle: 45,
+        inactiveAngle: 90,
+        voxelId: voxels[1].id,
         createdAt: new Date(),
         updatedAt: new Date()
       },
       {
-        id: `${modules[1].id}::ULTRASOUND`,
-        type: "ULTRASOUND",
-        moduleId: modules[1].id,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: `${modules[1].id}::MICROPHONE`,
-        type: "MICROPHONE",
-        moduleId: modules[1].id,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: `${modules[2].id}::ULTRASOUND`,
-        type: "ULTRASOUND",
-        moduleId: modules[2].id,
-        createdAt: new Date(),
-        updatedAt: new Date()
-      },
-      {
-        id: `${modules[2].id}::MICROPHONE`,
-        type: "MICROPHONE",
-        moduleId: modules[2].id,
+        id: uuidv4(),
+        activeAngle: 45,
+        inactiveAngle: 90,
+        voxelId: voxels[2].id,
         createdAt: new Date(),
         updatedAt: new Date()
       }
     ]
-    await queryInterface.bulkInsert("sensors", sensors)
+    await queryInterface.bulkInsert("transparency_motors", transparencyMotors)
 
-    // Seed data for SensorReading
-    const sensorReadings = []
-
-    sensors.forEach((sensor) => {
-      for (let i = 0; i < 3; i++) {
-        sensorReadings.push({
-          id: uuidv4(),
-          value: Math.random() * 100,
-          processed: false,
-          type: sensor.type,
-          sensorId: sensor.id,
-          createdAt: new Date(),
-          updatedAt: new Date()
-        })
+    // Seed data for Entanglement
+    const entanglements = [
+      {
+        id: uuidv4(),
+        moduleId: modules[0].id,
+        relatedModuleId: modules[2].id,
+        createdAt: new Date(),
+        updatedAt: new Date()
+      },
+      {
+        id: uuidv4(),
+        moduleId: modules[2].id,
+        relatedModuleId: modules[0].id,
+        createdAt: new Date(),
+        updatedAt: new Date()
       }
-    })
+    ]
+    await queryInterface.bulkInsert("entanglements", entanglements)
 
-    await queryInterface.bulkInsert("sensor_readings", sensorReadings)
+    console.log("Seeding completed!")
   },
 
   down: async (queryInterface) => {
     // Remove all entries
-    await queryInterface.bulkDelete("sensor_readings", null, {})
-    await queryInterface.bulkDelete("motors", null, {})
-    await queryInterface.bulkDelete("sensors", null, {})
+    await queryInterface.bulkDelete("entanglements", null, {})
+    await queryInterface.bulkDelete("transparency_motors", null, {})
+    await queryInterface.bulkDelete("colour_motors", null, {})
     await queryInterface.bulkDelete("voxels", null, {})
     await queryInterface.bulkDelete("modules", null, {})
   }

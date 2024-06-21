@@ -4,6 +4,9 @@ export class ConnectionManager {
   }
 
   addConnection(macAddress, ws) {
+    if (!macAddress) {
+      throw "NO_MAC_ADDRESS_ERROR"
+    }
     this.connections.set(macAddress, ws)
   }
 

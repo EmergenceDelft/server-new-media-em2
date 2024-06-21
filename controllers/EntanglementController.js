@@ -37,9 +37,9 @@ export async function createEntanglement(mac_addresses) {
 }
 
 /* Read */
-export async function readEntanglements() {
+export async function readEntanglements(options = {}) {
   try {
-    const entanglements = await Entanglement.findAll()
+    const entanglements = await Entanglement.findAll(options)
     return entanglements
   } catch (error) {
     console.error("Error reading entanglements: ", error)
