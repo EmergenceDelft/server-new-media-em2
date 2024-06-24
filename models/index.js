@@ -1,71 +1,46 @@
 import Sequelize from "sequelize"
 import sequelize from "../services/db.js"
 
-// Define a db object that can be used globally
+/* Define a db object that can be used globally */
 const db = {}
 
 db.sequelize = sequelize
 db.Sequelize = Sequelize
 
-// Define all models in the db object
+/* Define all models in the db object */
 import Module from "./Module.js"
 import Voxel from "./Voxel.js"
-import Sensor from "./Sensor.js"
-import SensorReading from "./SensorReading.js"
-import Motor from "./Motor.js"
+import ColourMotor from "./ColourMotor.js"
+import TransparencyMotor from "./TransparencyMotor.js"
+import Entanglement from "./Entanglement.js"
 
 db.Module = Module(sequelize, Sequelize)
 db.Voxel = Voxel(sequelize, Sequelize)
-db.Sensor = Sensor(sequelize, Sequelize)
-db.SensorReading = SensorReading(sequelize, Sequelize)
-db.Motor = Motor(sequelize, Sequelize)
+db.ColourMotor = ColourMotor(sequelize, Sequelize)
+db.TransparencyMotor = TransparencyMotor(sequelize, Sequelize)
+db.Entanglement = Entanglement(sequelize, Sequelize)
 
-//many modules are entangled to many modules
-
+/* Many modules are Entangled with many modules */
 db.Module.belongsToMany(db.Module, {
   as: "originalModule",
   foreignKey: "moduleId",
   otherKey: "entangledModuleId",
-  through: "entangled"
+  through: db.Entanglement
 })
+
 db.Module.belongsToMany(db.Module, {
   as: "entangledModule",
   foreignKey: "entangledModuleId",
   otherKey: "moduleId",
-  through: "entangled"
+  through: db.Entanglement
 })
 
-//db.Module.belongsToMany(db.Module)
+/* One Module has many Voxels */
+db.Module.hasMany(db.Voxel)
+db.Voxel.belongsTo(db.Module)
 
-//One Module has many Voxels
-db.Module.hasMany(db.Voxel, {
-  // foreignKey: "module_id"
-})
-db.Voxel.belongsTo(db.Module, {
-  // foreignKey: "module_id"
-})
-
-//One Module has many Sensors
-db.Module.hasMany(db.Sensor, {
-  // foreignKey: "module_id"
-})
-db.Sensor.belongsTo(db.Module, {
-  // foreignKey: "module_id"
-})
-
-//one Module has many motors
-db.Voxel.hasMany(db.Motor, {
-  // foreignKey: "voxel_id"
-})
-db.Motor.belongsTo(db.Voxel, {
-  // foreignKey: "voxel_id"
-})
-//One Sensor has many SensorReadings
-db.Sensor.hasMany(db.SensorReading, {
-  // foreignKey: "id"
-})
-db.SensorReading.belongsTo(db.Sensor, {
-  // foreignKey: "id"
-})
+/* One Voxel has one ColourMotors and one TransparencyMotors */
+db.Voxel.hasOne(db.ColourMotor)
+db.Voxel.hasOne(db.TransparencyMotor)
 
 export default db

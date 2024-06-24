@@ -1,86 +1,106 @@
-import {
-  createModule,
-  getModuleByMacAddress
-} from "../controllers/ModuleController.js"
-
-import { createSensor } from "../controllers/SensorController.js"
-
-import { createSensorReading } from "../controllers/SensorReadingController.js"
-
-import { createMotor, updateMotor } from "../controllers/MotorController.js"
+import { Message } from "../classes/Message.js"
+import { createColourMotor } from "../controllers/ColourMotorController.js"
+import { readEntanglements } from "../controllers/EntanglementController.js"
+import { createModule, readModule } from "../controllers/ModuleController.js"
+import { createTransparencyMotor } from "../controllers/TransparencyMotorController.js"
 import { createVoxel } from "../controllers/VoxelController.js"
+import db from "../models/index.js"
+import connectionManager from "./connectionManager.js"
 
-const MOTOR_AMOUNT = 2
-const VOXEL_AMOUNT = 1
-
-export function handleMessage(msg, ws) {
+export function handleMessage(message) {
   try {
-    var jsonMsg = JSON.parse(msg)
+    var jsonMessage = JSON.parse(message)
   } catch (err) {
     console.error("Error in parsing message data.", err)
   }
 
-  // Initial message sent by the ESP to the server.
-  // Sadly JS does not have native enum support.
-  switch (jsonMsg.type) {
-    case "hello":
-      handleHelloMessage(jsonMsg, ws)
-      break
+  console.log(jsonMessage.type)
 
-    case "sensor_reading":
-      handleSensorReadingMessage(jsonMsg)
+  switch (jsonMessage.type) {
+    /* Initial message sent by the ESP to the server. */
+    case "hello":
+      handleHelloMessage(jsonMessage)
       break
-    case "motor_angle":
-      handleMotorAngleMessage(jsonMsg)
+    case "measured":
+      handleModuleMeasured(jsonMessage)
+      break
+    case "unmeasured":
+      handleModuleUnmeasured(jsonMessage)
       break
   }
-}
 
-function handleHelloMessage(msg, ws) {
-  //Check if the mac address already exists in DB, if not, create a new module
-  ws.mac_address = msg.mac_address
-  getModuleByMacAddress(msg.mac_address).then((existingModel) => {
-    if (!existingModel) {
-      createModule(msg.mac_address)
-        .then(console.log("Module created"))
-        .then(() =>
-          msg.sensors.forEach((sensor_type) => {
-            createSensor(sensor_type, msg.mac_address)
-              .then(console.log(sensor_type + "Sensor created"))
-              .catch((err) =>
-                console.error("Could not create a sensor in the database", err)
-              )
-          })
-        )
-        .then(() => {
-          for (let i = 0; i < VOXEL_AMOUNT; i++) {
-            createVoxel(msg.mac_address, i)
-              .then(console.log("Voxel created"))
-              .then((voxelId) => {
-                createMotor(
-                  voxelId,
-                  0,
-                  "TRANSPARENCY",
-                  "MANUAL",
-                  msg.mac_address
-                )
-                createMotor(voxelId, 1, "COLOR", "AUTO", msg.mac_address)
-                console.log("2 Motors created")
-              })
-          }
-        })
+  async function handleHelloMessage(message) {
+    console.log("[Server] Received a HELLO message from: " + message.macAddress)
+    let existingModule = await readModule(message.macAddress)
+    if (!existingModule) {
+      const transaction = await db.sequelize.transaction()
+
+      try {
+        existingModule = await createModule(message.macAddress)
+        const voxel = await createVoxel(existingModule.id)
+        await createColourMotor(voxel.id)
+        await createTransparencyMotor(voxel.id)
+
+        await transaction.commit()
+
+        existingModule = await readModule(message.macAddress)
+      } catch (error) {
+        console.log("Error creating module: ", error)
+        await transaction.rollback()
+        throw error
+      }
     }
-  })
-}
 
-function handleSensorReadingMessage(msg) {
-  createSensorReading(msg.sensor_id, msg.value, msg.sensor_type).catch((err) =>
-    console.error("Could not create a sensor reading in the database", err)
-  )
-}
+    const setupMessage = new Message("setup", existingModule)
 
-function handleMotorAngleMessage(msg) {
-  updateMotor(msg.id, msg.value).catch((err) =>
-    console.error("Could not create a sensor reading in the database", err)
-  )
+    connectionManager.sendMessage(existingModule.id, setupMessage)
+  }
+
+  async function handleModuleMeasured(message) {
+    console.log(
+      "[Server] Received a MEASURED message from: " + message.macAddress
+    )
+
+    const entanglements = await readEntanglements({
+      where: {
+        moduleId: message.macAddress
+      }
+    })
+
+    const moduleIds = new Set()
+    entanglements.forEach((entanglement) => {
+      moduleIds.add(entanglement.relatedModuleId)
+    })
+
+    const entangledMeasuredMessage = new Message("entangled_measured", {
+      currentColourAngle: message.currentColourAngle
+    })
+    connectionManager.broadcastMessage(
+      Array.from(moduleIds),
+      entangledMeasuredMessage
+    )
+  }
+
+  async function handleModuleUnmeasured(message) {
+    console.log(
+      "[Server] Received a UNMEASURED message from: " + message.macAddress
+    )
+    const entanglements = await readEntanglements({
+      where: {
+        moduleId: message.macAddress
+      }
+    })
+
+    const moduleIds = new Set()
+    entanglements.forEach((entanglement) => {
+      moduleIds.add(entanglement.relatedModuleId)
+    })
+
+    const entangledMeasuredMessage = new Message("entangled_unmeasured", {})
+
+    connectionManager.broadcastMessage(
+      Array.from(moduleIds),
+      entangledMeasuredMessage
+    )
+  }
 }

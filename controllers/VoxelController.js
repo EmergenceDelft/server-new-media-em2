@@ -2,17 +2,16 @@ import db from "../models/index.js"
 
 const Voxel = db.Voxel
 
-// Exports a createModule function which can be used in the app
-export async function createVoxel(mac, cnt) {
-  const newId = mac + "::VOXEL_" + cnt
+/*
+  CRUD Functionality
+*/
+
+/* Create */
+export async function createVoxel(moduleId) {
   try {
-    await Voxel.create({
-      id: newId,
-      moduleId: mac
-    })
-    return newId
+    return await Voxel.create({ moduleId })
   } catch (error) {
-    console.log(error)
-    throw error // Re-throw the error if you want to handle it outside this function
+    console.error("Error creating voxel:", error)
+    throw error
   }
 }

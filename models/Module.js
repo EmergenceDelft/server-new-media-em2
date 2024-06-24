@@ -7,13 +7,45 @@ const Module = (sequelize) => {
       primaryKey: true,
       allowNull: false
     },
-    connection_alive: {
-      type: DataTypes.BOOLEAN,
-      defaultValue: true
+    minProximityThreshold: {
+      type: DataTypes.FLOAT,
+      defaultValue: 2
     },
-    orientation: {
+    maxProximityThreshold: {
+      type: DataTypes.FLOAT,
+      defaultValue: 50
+    },
+    minAudioJitterThreshold: {
+      type: DataTypes.FLOAT,
+      defaultValue: 500
+    },
+    maxAudioJitterThreshold: {
+      type: DataTypes.FLOAT,
+      defaultValue: 5000
+    },
+    audioSampleAmount: {
       type: DataTypes.INTEGER,
-      default: 0
+      defaultValue: 100
+    },
+    audioSampleInterval: {
+      type: DataTypes.FLOAT,
+      defaultValue: 100
+    },
+    proximitySampleInterval: {
+      type: DataTypes.INTEGER,
+      defaultValue: 300
+    },
+    proximitySampleAmount: {
+      type: DataTypes.FLOAT,
+      defaultValue: 100
+    },
+    position_x: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0.5
+    },
+    position_y: {
+      type: DataTypes.FLOAT,
+      defaultValue: 0.5
     }
   })
   return Module
