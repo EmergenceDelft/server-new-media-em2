@@ -39,6 +39,18 @@ const Module = (sequelize) => {
       type: DataTypes.FLOAT,
       defaultValue: 100
     },
+    transparencyMotorJitter: {
+      type: DataTypes.BOOLEAN,
+      defaultValue: false
+    },
+    measuredBlockingStateInterval: {
+      type: DataTypes.FLOAT,
+      defaultValue: 2000
+    },
+    unmeasuredBlockingStateInterval: {
+      type: DataTypes.FLOAT,
+      defaultValue: 2000
+    },
     position_x: {
       type: DataTypes.FLOAT,
       defaultValue: 0.5
