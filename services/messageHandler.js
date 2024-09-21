@@ -1,7 +1,7 @@
 import { Message } from "../classes/Message.js"
 import { createColourMotor } from "../controllers/ColourMotorController.js"
 import { readEntanglements } from "../controllers/EntanglementController.js"
-import { createModule, readModule } from "../controllers/ModuleController.js"
+import { createModule, readModule, readModules } from "../controllers/ModuleController.js"
 import { createTransparencyMotor } from "../controllers/TransparencyMotorController.js"
 import { createVoxel } from "../controllers/VoxelController.js"
 import db from "../models/index.js"
@@ -27,6 +27,25 @@ export function handleMessage(message) {
     case "unmeasured":
       handleModuleUnmeasured(jsonMessage)
       break
+    case "button_pressed":
+      handleButtonPressed(jsonMessage)
+      break
+  }
+
+  async function handleButtonPressed(message) {
+    console.log("[Server] Received a BUTTON PRESSED message from: " + message.macAddress)
+    
+    const modules = await readModules();
+    const moduleIds = new Set()
+    modules.forEach((module) => {
+      moduleIds.add(module.id)
+    })
+
+    const buttonPressedMessage = new Message("button_pressed")
+    connectionManager.broadcastMessage(
+      Array.from(moduleIds),
+      buttonPressedMessage
+    )
   }
 
   async function handleHelloMessage(message) {
