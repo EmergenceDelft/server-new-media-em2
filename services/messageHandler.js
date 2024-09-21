@@ -80,15 +80,10 @@ export function handleMessage(message) {
       "[Server] Received a MEASURED message from: " + message.macAddress
     )
 
-    const entanglements = await readEntanglements({
-      where: {
-        moduleId: message.macAddress
-      }
-    })
-
+    const modules = await readModules();
     const moduleIds = new Set()
-    entanglements.forEach((entanglement) => {
-      moduleIds.add(entanglement.relatedModuleId)
+    modules.forEach((module) => {
+      moduleIds.add(module.id)
     })
 
     const entangledMeasuredMessage = new Message("entangled_measured", {
@@ -104,15 +99,11 @@ export function handleMessage(message) {
     console.log(
       "[Server] Received a UNMEASURED message from: " + message.macAddress
     )
-    const entanglements = await readEntanglements({
-      where: {
-        moduleId: message.macAddress
-      }
-    })
-
+    
+    const modules = await readModules();
     const moduleIds = new Set()
-    entanglements.forEach((entanglement) => {
-      moduleIds.add(entanglement.relatedModuleId)
+    modules.forEach((module) => {
+      moduleIds.add(module.id)
     })
 
     const entangledMeasuredMessage = new Message("entangled_unmeasured", {})
