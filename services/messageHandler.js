@@ -41,10 +41,13 @@ export function handleMessage(message) {
     })
 
     const buttonPressedMessage = new Message("button_pressed")
-    connectionManager.broadcastMessage(
-      Array.from(moduleIds),
+    Array.from(moduleIds).forEach((moduleId) => {
+    console.log(`[Server] Broadcasting message to module ID: ${moduleId}`);
+      connectionManager.broadcastMessage(
+      [moduleId],  // broadcast to individual module
       buttonPressedMessage
-    )
+      );
+    });
   }
 
   async function handleHelloMessage(message) {
