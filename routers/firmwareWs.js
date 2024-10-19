@@ -12,6 +12,15 @@ expressWs(firmwareWs)
 firmwareWs.ws("/", async function (ws, req) {
   connectionManager.addConnection(req.query.mac_address, ws)
 
+  const keepAliveInterval = setInterval(() => {
+    if (ws.readyState === ws.OPEN) {
+      ws.send("ping")
+      ws.ping("pinged") // Send a ping message
+    }
+    console.log("pinged");
+  }, 10000); // Ping every 30 seconds
+
+
   ws.on("message", async function (msg) {
     try {
       handleMessage(msg)
@@ -22,6 +31,8 @@ firmwareWs.ws("/", async function (ws, req) {
 
   ws.on("close", async function () {
     connectionManager.removeConnection(req.query.mac_address)
+    clearInterval(keepAliveInterval); // Stop the keep-alive pings when the connection closes
+
   })
 })
 
