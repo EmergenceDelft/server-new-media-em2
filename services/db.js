@@ -34,4 +34,13 @@ sequelize
     console.error(err)
   })
 
+sequelize.sync({ alter: true }) // Or { force: true } for dev
+  .then(() => {
+    console.log("[Server] Models synchronized successfully.");
+  })
+  .catch((err) => {
+    console.error("[Server] Failed to synchronize models.");
+    console.error(err);
+  });
+
 export default sequelize
